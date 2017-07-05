@@ -42,19 +42,20 @@ public class PizzeriaAdminConsoleApp {
 			}
 
 		} while (choice != 99);
-		cleanConsole();
+		cleanConsole(50);
 		System.out.println("Aurevoir \u2639");
 		sc.close();
 	}
 
-	public static void cleanConsole() {
-		System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-				+ "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n" + "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-				+ "\n\n\n\n\n\n\n\n\n\n\n\n\n");
+	public static void cleanConsole(int occ) {
+		System.out.println("");
+		if(occ>0){
+			cleanConsole(--occ);
+		}
 	}
 
 	private static void showPizzas() {
-		cleanConsole();
+		cleanConsole(50);
 		System.out.println("Liste des pizzas\n");
 		for (Pizza p : Pizza.allPizzas) {
 			System.out.println(p.getCode() + " -> " + p.getNom() + " (" + p.getPrix() + "€)");
@@ -62,7 +63,7 @@ public class PizzeriaAdminConsoleApp {
 		System.out.println("Appuyez sur Entrée pour continuer...");
 		sc.nextLine();
 		sc.nextLine();
-		cleanConsole();
+		cleanConsole(50);
 	}
 
 	private static void addPizza() {
@@ -89,7 +90,7 @@ public class PizzeriaAdminConsoleApp {
 		} while (!isDouble(prix));
 
 		new Pizza(Pizza.getNextAvailableId(), code, nom, Double.parseDouble(prix));
-		cleanConsole();
+		cleanConsole(50);
 		System.out.println("Pizza ajoutée !\n");
 	}
 
@@ -145,7 +146,7 @@ public class PizzeriaAdminConsoleApp {
 		if (!String.valueOf(Pizza.getPizzaById(selectPizza).getPrix()).equals(prix)) {
 			Pizza.getPizzaById(selectPizza).setPrix(Double.valueOf(prix));
 		}
-		cleanConsole();
+		cleanConsole(50);
 		System.out.println("Pizza modifiée !\n");
 	}
 
@@ -161,7 +162,6 @@ public class PizzeriaAdminConsoleApp {
 			System.out.println("Veuillez choisir la pizza à supprimer.");
 			System.out.println("(99 pour abandonner)");
 			selectPizza = sc.nextLine();
-			//System.out.println(!isInt(selectPizza)+" "+( Pizza.getPizzaById(Integer.parseInt(selectPizza))==null)+" "+(Pizza.getPizzaByCode(selectPizza)==null));
 		} while(Pizza.getPizzaByCode(selectPizza)==null && (!isInt(selectPizza) && Pizza.getPizzaById(Integer.parseInt(selectPizza))==null));
 		if (selectPizza.equals("99")) {
 			return;
@@ -169,7 +169,7 @@ public class PizzeriaAdminConsoleApp {
 		Pizza delPizza = (isInt(selectPizza))? Pizza.getPizzaById(Integer.parseInt(selectPizza)) : Pizza.getPizzaByCode(selectPizza);
 		Pizza.allPizzas.remove(Pizza.allPizzas.indexOf(delPizza));
 		Pizza.sortPizzasById();
-		cleanConsole();
+		cleanConsole(50);
 		System.out.println("Pizza supprimée !\n");
 	}
 
