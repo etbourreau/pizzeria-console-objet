@@ -1,11 +1,17 @@
 package fr.pizzeria.model;
 
+import java.lang.reflect.Field;
+
 public class Pizza implements Comparable<Object>{
 	
 	private int id;
+	@ToString
 	private String code;
+	@ToString(upperCase = false)
 	private String nom;
+	@ToString
 	private Double prix;
+	@ToString
 	CategoriePizza categorie;
 
 	/**Pizza's constructor
@@ -78,12 +84,19 @@ public class Pizza implements Comparable<Object>{
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Pizza ");
-		sb.append(this.getNom());
-		sb.append(" (code = ").append(this.getCode());
-		sb.append(", id = ").append(this.getId());
-		sb.append(", prix = ").append(this.getPrix());
-		sb.append(", catégorie = ").append(this.getCategorie().getDescription()).append(")");
+		boolean first = true;
+		for(Field f : Pizza.class.getDeclaredFields()){
+			if(f.isAnnotationPresent(ToString.class)){
+				if(first) first = false; else sb.append(" ");
+				try {
+					if(f.getDeclaredAnnotation(ToString.class).upperCase()){
+						sb.append(String.valueOf(f.get(this)).toUpperCase());
+					}else{
+						sb.append(String.valueOf(f.get(this)));
+					}
+				} catch (IllegalArgumentException | IllegalAccessException e) {	}
+			}
+		}
 		return sb.toString();
 	}
 }
