@@ -24,7 +24,7 @@ public class Pizza implements Comparable<Object>{
 	public Pizza(int id, String code, String nom, Double prix, CategoriePizza categorie) {
 		super();
 		this.id = id;
-		this.code = code;
+		this.code = code.toUpperCase();
 		this.nom = nom;
 		this.prix = prix;
 		this.categorie = categorie;
@@ -82,6 +82,9 @@ public class Pizza implements Comparable<Object>{
 		}
 	}
 	
+	/** return format string with annotated fields
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		boolean first = true;
