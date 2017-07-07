@@ -1,6 +1,6 @@
 package fr.pizzeria.ihm;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -8,13 +8,13 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.PizzaDaoMemoire;
 import fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
 	
 	
-	public ListerPizzaOptionMenu(IPizzaDao dao, Menu m){
+	public ListerPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
 		this.libelle = "Liste des Pizzas";
 	}
@@ -33,7 +33,7 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 		JTable table = new JTable();
 		table.setEnabled(false);
 		table.setBounds(0, 0, 460, 260);
-		table.setModel(createModel(dao.getAllPizzas()));
+		table.setModel(createModel(dao.findAllPizzas()));
 		//table.getColumnModel().getColumn(0).setPreferredWidth(50);
 		scrollPane.setViewportView(table);
 		
@@ -46,7 +46,7 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 	 * @param ArrayList of pizzas
 	 * @return the generated tableModel
 	 */
-	private DefaultTableModel createModel(ArrayList<Pizza> pizzas) {
+	private DefaultTableModel createModel(List<Pizza> pizzas) {
 		String[] columnsTable = {"ID", "Code", "Nom", "Prix"};
 		String[][] dataTable = new String[pizzas.size()][columnsTable.length];
 		int index = 0;

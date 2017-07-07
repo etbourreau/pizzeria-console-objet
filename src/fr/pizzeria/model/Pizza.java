@@ -8,10 +8,10 @@ public class Pizza implements Comparable<Object>{
 	private Double prix;
 
 	/**Pizza's constructor
-	 * @param Pizza's ID
-	 * @param Pizza's code (e.g. "SAV")
-	 * @param Pizza's name
-	 * @param Pizza's price
+	 * @param id of tha pizza
+	 * @param code of the pizza
+	 * @param nom is the name of the pizza
+	 * @param prix is the price of the pizza
 	 */
 	public Pizza(int id, String code, String nom, Double prix) {
 		super();
@@ -53,7 +53,7 @@ public class Pizza implements Comparable<Object>{
 		this.prix = prix;
 	}
 	
-	/**Override Comparable's method to sort pizzas in a List<Pizza>
+	/**Override Comparable's method to sort pizzas in a List of Pizzas
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override

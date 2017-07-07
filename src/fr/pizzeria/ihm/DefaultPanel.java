@@ -9,6 +9,8 @@ import javax.swing.JPanel;
  * Default panel for OptionMenus
  */
 public class DefaultPanel extends JPanel {
+	private static final long serialVersionUID = 1L;
+
 	public DefaultPanel(){
 		setBounds(61, 45, 460, 260);
 		setBackground(Color.LIGHT_GRAY);

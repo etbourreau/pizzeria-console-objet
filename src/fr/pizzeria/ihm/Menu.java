@@ -18,7 +18,7 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.PizzaDaoMemoire;
 import fr.pizzeria.util.*;
 
 import javax.swing.JPanel;
@@ -33,14 +33,14 @@ public class Menu extends JFrame{
 	public static JLabel statusBar;
 	public static boolean busy = false;
 	static ArrayList<OptionMenu> options;
-	private IPizzaDao dao;
+	private PizzaDaoMemoire dao;
 	private JPanel panelContenu;
 	
 	/**
 	 * Main menu constructor
 	 */
 	public Menu() {
-		this.dao = new IPizzaDao();
+		this.dao = new PizzaDaoMemoire();
 		this.init();
 		setContentPane(new ImagePanel(Toolkit.getDefaultToolkit().getImage(Menu.class.getResource("/fr/pizzeria/assets/background.jpg"))));
 		setSize(592,418);
@@ -110,7 +110,7 @@ public class Menu extends JFrame{
 	 * Initializes default variables
 	 */
 	private void init(){
-		IPizzaDao.init();
+		PizzaDaoMemoire.init();
 		options = new ArrayList<OptionMenu>();
 		options.add(new ListerPizzaOptionMenu(dao, this));
 		options.add(new AjouterPizzaOptionMenu(dao, this));

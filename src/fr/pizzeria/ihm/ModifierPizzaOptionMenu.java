@@ -6,7 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -15,8 +15,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.PizzaDaoMemoire;
 import fr.pizzeria.exception.InvalidPizzaException;
+import fr.pizzeria.exception.UpdatePizzaException;
 import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
 import fr.pizzeria.util.Decimal;
@@ -30,7 +31,7 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 	private boolean lock = false;
 	
 	
-	public ModifierPizzaOptionMenu(IPizzaDao dao, Menu m){
+	public ModifierPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
 		this.libelle = "Modifier une Pizza";
 	}
@@ -131,12 +132,12 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 					Pizza p = dao.getPizzaById(id);
 					if(validFields() && (!txtCode.getText().equals(p.getCode()) || !txtNom.getText().equals(p.getNom()) || Decimal.priceRound(Double.parseDouble(txtPrix.getText()))!=p.getPrix())){
 						try {
-							dao.updatePizza(id, new Pizza(id, txtCode.getText(), txtNom.getText(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
+							dao.updatePizza(new Pizza(id, txtCode.getText(), txtNom.getText(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
 							menu.setStatus("Pizza "+txtNom.getText()+" modifiée !", 0);
 							lock = true;
 							fillPizzas(dao, cbxPizza.getSelectedIndex());
 							lock = false;
-						} catch (NumberFormatException | InvalidPizzaException exc) {
+						} catch (UpdatePizzaException exc) {
 							menu.setStatus("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !", 2);
 							System.out.println("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !");
 							System.out.println(exc.getMessage());
@@ -227,8 +228,8 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 	/**Fills the selection combobox with pizzas
 	 * @param list of pizzas
 	 */
-	private void fillPizzas(IPizzaDao dao, int index){
-		ArrayList<Pizza> pizzas = dao.getAllPizzas();
+	private void fillPizzas(PizzaDaoMemoire dao, int index){
+		List<Pizza> pizzas = dao.findAllPizzas();
 		cbxPizza.removeAllItems();
 		for(Pizza p : pizzas){
 			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId()+" "+p.getNom()));

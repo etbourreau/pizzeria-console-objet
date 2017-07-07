@@ -1,7 +1,9 @@
 package fr.pizzeria.exception;
 
-public class InvalidPizzaException extends Exception {
+public class InvalidPizzaException extends StockageException {
 	
+	private static final long serialVersionUID = 1L;
+
 	/**
 	 * Empty constructor
 	 */

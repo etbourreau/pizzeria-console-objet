@@ -1,11 +1,10 @@
 package fr.pizzeria.ihm;
 
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -14,7 +13,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.exception.DeletePizzaException;
 import fr.pizzeria.exception.InvalidPizzaException;
 import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
@@ -23,7 +23,7 @@ public class SupprimerPizzaOptionMenu extends OptionMenu{
 
 	private JComboBox<CbxItem> cbxPizza;
 	
-	public SupprimerPizzaOptionMenu(IPizzaDao dao, Menu m){
+	public SupprimerPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
 		this.libelle = "Supprimer une Pizza";
 	}
@@ -60,11 +60,11 @@ public class SupprimerPizzaOptionMenu extends OptionMenu{
 				try {
 					p = dao.getPizzaById(id);
 					if(JOptionPane.showConfirmDialog((Component) null, "Voulez-vous vraiment supprimer la pizza "+p.getNom()+" ?", "alert", JOptionPane.OK_CANCEL_OPTION) == 0){
-						dao.deletePizza(id);
+						dao.deletePizza(p);
 						menu.setStatus("Pizza "+p.getNom()+" supprimée !", 0);
 						fillPizzas(dao, 0);
 					}
-				} catch (InvalidPizzaException exc) {
+				} catch (DeletePizzaException | InvalidPizzaException exc) {
 					menu.setStatus("La pizza n'a pas pu être supprimée !", 2);
 					System.out.println("La pizza n'a pas pu être supprimée !");
 					System.out.println(exc.getMessage());
@@ -93,14 +93,12 @@ public class SupprimerPizzaOptionMenu extends OptionMenu{
 	/**Fills the selection combobox with pizzas
 	 * @param list of pizzas
 	 */
-	private void fillPizzas(IPizzaDao dao, int index){
-		ArrayList<Pizza> pizzas = dao.getAllPizzas();
+	private void fillPizzas(PizzaDaoMemoire dao, int index){
+		List<Pizza> pizzas = dao.findAllPizzas();
 		cbxPizza.removeAllItems();
-		System.out.println(cbxPizza.getItemCount()+" before");
 		for(Pizza p : pizzas){
 			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId()+" "+p.getNom()));
 		}
-		System.out.println(cbxPizza.getItemCount()+" after");
 		cbxPizza.setSelectedIndex(index);
 	}
 

@@ -6,16 +6,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.sql.SQLException;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.InvalidPizzaException;
+import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.exception.SavePizzaException;
 import fr.pizzeria.model.Pizza;
 import fr.pizzeria.util.Decimal;
 
@@ -25,7 +23,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 	private JTextField txtNom;
 	private JTextField txtPrix;
 	
-	public AjouterPizzaOptionMenu(IPizzaDao dao, Menu m){
+	public AjouterPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
 		this.libelle = "Ajouter une Pizza";
 	}
@@ -111,17 +109,13 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 			public void actionPerformed(ActionEvent e) {
 				if(validFields()){
 					try {
-						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), txtCode.getText().toUpperCase(), txtNom.getText(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
+						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), txtCode.getText().toUpperCase(), txtNom.getText().trim(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
 						menu.setStatus("Pizza "+txtNom.getText()+" ajoutée !", 0);
 						initFields();
-					} catch (NumberFormatException | InvalidPizzaException exc) {
+					} catch (SavePizzaException exc) {
 						menu.setStatus("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !", 2);
 						System.out.println("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !");
 						System.out.println(exc.getMessage());
-					} catch (SQLException sqlExc) {
-						menu.setStatus("Erreur de connection à la base de données", 2);
-						System.out.println("Erreur de connection à la base de données");
-						System.out.println(sqlExc.getMessage());
 					}
 				}
 			}
