@@ -7,13 +7,17 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.exception.CategoryNotFoundException;
 import fr.pizzeria.exception.SavePizzaException;
+import fr.pizzeria.model.CategoriePizza;
+import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
 import fr.pizzeria.util.Decimal;
 
@@ -22,6 +26,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 	private JTextField txtCode;
 	private JTextField txtNom;
 	private JTextField txtPrix;
+	private JComboBox<CbxItem> cbxCategorie;
 	
 	public AjouterPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
@@ -104,15 +109,29 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 		lblPrixDevise.setBounds(330, 129, 16, 20);
 		panel.add(lblPrixDevise);
 		
+		JLabel lblCatgorie = new JLabel("Cat\u00E9gorie :");
+		lblCatgorie.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblCatgorie.setFont(new Font("Sylfaen", Font.PLAIN, 14));
+		lblCatgorie.setBounds(10, 166, 151, 20);
+		panel.add(lblCatgorie);
+		
+		cbxCategorie = new JComboBox<CbxItem>();
+		cbxCategorie.setFont(new Font("Sylfaen", Font.PLAIN, 14));
+		cbxCategorie.setBounds(171, 162, 175, 23);
+		panel.add(cbxCategorie);
+		fillCategories(CategoriePizza.values(), 0);
+		panel.add(cbxCategorie);
+		
 		JButton btnValider = new JButton("Valider");
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(validFields()){
 					try {
-						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), txtCode.getText().toUpperCase(), txtNom.getText().trim(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
+						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), txtCode.getText().toUpperCase(), txtNom.getText().trim(), Decimal.priceRound(Double.parseDouble(txtPrix.getText())), CategoriePizza.findCategoryById(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
 						menu.setStatus("Pizza "+txtNom.getText()+" ajoutée !", 0);
 						initFields();
-					} catch (SavePizzaException exc) {
+						fillCategories(CategoriePizza.values(), 0);
+					} catch (SavePizzaException | NumberFormatException | CategoryNotFoundException exc) {
 						menu.setStatus("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !", 2);
 						System.out.println("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !");
 						System.out.println(exc.getMessage());
@@ -121,7 +140,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 			}
 		});
 		btnValider.setFont(new Font("Sylfaen", Font.PLAIN, 14));
-		btnValider.setBounds(257, 180, 89, 23);
+		btnValider.setBounds(257, 208, 89, 23);
 		panel.add(btnValider);
 		
 		JButton btnAnnuler = new JButton("Annuler");
@@ -131,7 +150,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 			}
 		});
 		btnAnnuler.setFont(new Font("Sylfaen", Font.PLAIN, 14));
-		btnAnnuler.setBounds(145, 180, 89, 23);
+		btnAnnuler.setBounds(146, 208, 89, 23);
 		panel.add(btnAnnuler);
 		
 		menu.setContenu(panel);
@@ -172,6 +191,18 @@ public class AjouterPizzaOptionMenu extends OptionMenu{
 			return false;
 		}
 		return valid;
+	}
+	
+	/**Fills the categories JComboBox
+	 * @param categories of pizza
+	 * @param selectedIndex by default
+	 */
+	private void fillCategories(CategoriePizza[] categories, int selectedIndex){
+		cbxCategorie.removeAllItems();
+		for(CategoriePizza cp : categories){
+			this.cbxCategorie.addItem(new CbxItem(cp.toString(), cp.getDescription()));
+		}
+		cbxCategorie.setSelectedIndex(selectedIndex);
 	}
 
 }

@@ -16,8 +16,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.exception.CategoryNotFoundException;
 import fr.pizzeria.exception.InvalidPizzaException;
 import fr.pizzeria.exception.UpdatePizzaException;
+import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
 import fr.pizzeria.util.Decimal;
@@ -28,8 +30,8 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 	private JTextField txtCode;
 	private JTextField txtNom;
 	private JTextField txtPrix;
+	private JComboBox<CbxItem> cbxCategorie;
 	private boolean lock = false;
-	
 	
 	public ModifierPizzaOptionMenu(PizzaDaoMemoire dao, Menu m){
 		super(dao, m);
@@ -124,33 +126,58 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 		lblPrixDevise.setBounds(330, 154, 16, 20);
 		panel.add(lblPrixDevise);
 		
+		cbxCategorie = new JComboBox<CbxItem>();
+		cbxCategorie.setFont(new Font("Sylfaen", Font.PLAIN, 14));
+		cbxCategorie.setBounds(171, 187, 175, 23);
+		panel.add(cbxCategorie);
+		try {
+			fillCategories(CategoriePizza.values(), dao.getPizzaById(Integer.parseInt((((CbxItem)cbxPizza.getSelectedItem()).getValue()))).getCategorie().toString());
+		} catch (NumberFormatException exc) {
+			System.out.println("La conversion de "+((CbxItem)cbxPizza.getSelectedItem()).getValue()+" en int est invalide");
+			System.out.println(exc.getMessage());
+		} catch (InvalidPizzaException exc) {
+			menu.setStatus("La pizza sélectionnée est invalide", 2);
+			System.out.println("La pizza sélectionnée est invalide");
+			System.out.println(exc.getMessage());
+		}
+		
+		JLabel lblCatgorie = new JLabel("Cat\u00E9gorie :");
+		lblCatgorie.setHorizontalAlignment(SwingConstants.RIGHT);
+		lblCatgorie.setFont(new Font("Sylfaen", Font.PLAIN, 14));
+		lblCatgorie.setBounds(10, 188, 151, 20);
+		panel.add(lblCatgorie);
+		
 		JButton btnValider = new JButton("Valider");
 		btnValider.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					int id = Integer.parseInt(((CbxItem)cbxPizza.getSelectedItem()).getValue());
 					Pizza p = dao.getPizzaById(id);
-					if(validFields() && (!txtCode.getText().equals(p.getCode()) || !txtNom.getText().equals(p.getNom()) || Decimal.priceRound(Double.parseDouble(txtPrix.getText()))!=p.getPrix())){
+					if(validFields() && 
+							(!txtCode.getText().equals(p.getCode()) || 
+									!txtNom.getText().equals(p.getNom()) ||
+									Decimal.priceRound(Double.parseDouble(txtPrix.getText()))!=p.getPrix() || 
+									!((CbxItem)cbxCategorie.getSelectedItem()).getLabel().equalsIgnoreCase(p.getCategorie().getDescription()))){
 						try {
-							dao.updatePizza(new Pizza(id, txtCode.getText(), txtNom.getText(), Decimal.priceRound(Double.parseDouble(txtPrix.getText()))));
+							dao.updatePizza(new Pizza(id, txtCode.getText(), txtNom.getText(), Decimal.priceRound(Double.parseDouble(txtPrix.getText())), CategoriePizza.findCategoryById(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
 							menu.setStatus("Pizza "+txtNom.getText()+" modifiée !", 0);
 							lock = true;
 							fillPizzas(dao, cbxPizza.getSelectedIndex());
 							lock = false;
-						} catch (UpdatePizzaException exc) {
+						} catch (UpdatePizzaException | NumberFormatException | CategoryNotFoundException exc) {
 							menu.setStatus("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !", 2);
 							System.out.println("La pizza "+txtNom.getText()+" n'a pas pu être ajoutée !");
 							System.out.println(exc.getMessage());
 						}
 					}
-				} catch (InvalidPizzaException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+				} catch (NumberFormatException | InvalidPizzaException exc) {
+					System.out.println("La conversion de "+((CbxItem)cbxPizza.getSelectedItem()).getValue()+" en int est invalide");
+					System.out.println(exc.getMessage());
 				}
 			}
 		});
 		btnValider.setFont(new Font("Sylfaen", Font.PLAIN, 14));
-		btnValider.setBounds(259, 200, 89, 23);
+		btnValider.setBounds(259, 226, 89, 23);
 		panel.add(btnValider);
 		
 		JButton btnAnnuler = new JButton("Annuler");
@@ -160,13 +187,23 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 			}
 		});
 		btnAnnuler.setFont(new Font("Sylfaen", Font.PLAIN, 14));
-		btnAnnuler.setBounds(146, 200, 89, 23);
+		btnAnnuler.setBounds(146, 226, 89, 23);
 		panel.add(btnAnnuler);
 		
 		cbxPizza.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!lock){
 					initFields();
+					try {
+						fillCategories(CategoriePizza.values(), dao.getPizzaById(Integer.parseInt((((CbxItem)cbxPizza.getSelectedItem()).getValue()))).getCategorie().toString());
+					} catch (NumberFormatException exc) {
+						System.out.println("La conversion de "+((CbxItem)cbxPizza.getSelectedItem()).getValue()+" en int est invalide");
+						System.out.println(exc.getMessage());
+					} catch (InvalidPizzaException exc) {
+						menu.setStatus("La pizza sélectionnée est invalide", 2);
+						System.out.println("La pizza sélectionnée est invalide");
+						System.out.println(exc.getMessage());
+					}
 				}
 			}
 		});
@@ -227,14 +264,27 @@ public class ModifierPizzaOptionMenu extends OptionMenu{
 	
 	/**Fills the selection combobox with pizzas
 	 * @param list of pizzas
+	 * @param selectedIndex by default
 	 */
-	private void fillPizzas(PizzaDaoMemoire dao, int index){
+	private void fillPizzas(PizzaDaoMemoire dao, int selectedIndex){
 		List<Pizza> pizzas = dao.findAllPizzas();
 		cbxPizza.removeAllItems();
 		for(Pizza p : pizzas){
 			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId()+" "+p.getNom()));
 		}
-		cbxPizza.setSelectedIndex(index);
+		cbxPizza.setSelectedIndex(selectedIndex);
+	}
+	
+	private void fillCategories(CategoriePizza[] categories, String selectedCategoryName){
+		cbxCategorie.removeAllItems();
+		CbxItem currentItem;
+		for(CategoriePizza cp : categories){
+			currentItem = new CbxItem(cp.toString(), cp.getDescription());
+			this.cbxCategorie.addItem(currentItem);
+			if(currentItem.getValue().equals(selectedCategoryName)){
+				cbxCategorie.setSelectedItem(currentItem);
+			}
+		}
 	}
 
 }

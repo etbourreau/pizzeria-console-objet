@@ -92,14 +92,15 @@ public class SupprimerPizzaOptionMenu extends OptionMenu{
 	
 	/**Fills the selection combobox with pizzas
 	 * @param list of pizzas
+	 * @param selectedIndex by default
 	 */
-	private void fillPizzas(PizzaDaoMemoire dao, int index){
+	private void fillPizzas(PizzaDaoMemoire dao, int selectedIndex){
 		List<Pizza> pizzas = dao.findAllPizzas();
 		cbxPizza.removeAllItems();
 		for(Pizza p : pizzas){
 			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId()+" "+p.getNom()));
 		}
-		cbxPizza.setSelectedIndex(index);
+		cbxPizza.setSelectedIndex(selectedIndex);
 	}
 
 }

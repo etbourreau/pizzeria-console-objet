@@ -47,14 +47,15 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 	 * @return the generated tableModel
 	 */
 	private DefaultTableModel createModel(List<Pizza> pizzas) {
-		String[] columnsTable = {"ID", "Code", "Nom", "Prix"};
+		String[] columnsTable = {"ID", "Code", "Nom", "Catégorie", "Prix"};
 		String[][] dataTable = new String[pizzas.size()][columnsTable.length];
 		int index = 0;
 		for(Pizza p : pizzas){
 			dataTable[index][0] = String.valueOf(p.getId());
 			dataTable[index][1] = p.getCode();
-			dataTable[index][2] =p.getNom();
-			dataTable[index][3] = String.valueOf(p.getPrix())+"€";
+			dataTable[index][2] = p.getNom();
+			dataTable[index][3] = p.getCategorie().getDescription();
+			dataTable[index][4] = String.valueOf(p.getPrix())+"€";
 			index++;
 		}
 		return new DefaultTableModel(dataTable, columnsTable);
