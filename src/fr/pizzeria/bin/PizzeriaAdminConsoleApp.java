@@ -19,8 +19,6 @@ public class PizzeriaAdminConsoleApp {
 	static Scanner sc = new Scanner(System.in).useLocale(Locale.US);
 
 	public static void main(String[] args) {
-		Glitch g = new Glitch("error");
-		
 		Menu mainMenu = new Menu();
 	}
 }
