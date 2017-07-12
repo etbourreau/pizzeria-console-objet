@@ -6,7 +6,7 @@
   <name>pizzeria-console-objet</name>
   <build>
   	<finalName>pizzeria-console-objet</finalName>
-    <sourceDirectory>src</sourceDirectory>
+    <sourceDirectory>src/main/java</sourceDirectory>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>

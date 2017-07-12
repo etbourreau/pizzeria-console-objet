@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm;
+package main.java.fr.pizzeria.ihm;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,14 +15,14 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.PizzaDaoMemoire;
-import fr.pizzeria.exception.CategoryNotFoundException;
-import fr.pizzeria.exception.InvalidPizzaException;
-import fr.pizzeria.exception.UpdatePizzaException;
-import fr.pizzeria.model.CategoriePizza;
-import fr.pizzeria.model.CbxItem;
-import fr.pizzeria.model.Pizza;
-import fr.pizzeria.util.Decimal;
+import main.java.fr.pizzeria.dao.PizzaDaoMemoire;
+import main.java.fr.pizzeria.exception.CategoryNotFoundException;
+import main.java.fr.pizzeria.exception.InvalidPizzaException;
+import main.java.fr.pizzeria.exception.UpdatePizzaException;
+import main.java.fr.pizzeria.model.CategoriePizza;
+import main.java.fr.pizzeria.model.CbxItem;
+import main.java.fr.pizzeria.model.Pizza;
+import main.java.fr.pizzeria.util.Decimal;
 
 public class ModifierPizzaOptionMenu extends OptionMenu{
 	

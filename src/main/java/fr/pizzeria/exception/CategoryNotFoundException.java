@@ -1,4 +1,4 @@
-package fr.pizzeria.exception;
+package main.java.fr.pizzeria.exception;
 
 public class CategoryNotFoundException extends StockageException {
 	

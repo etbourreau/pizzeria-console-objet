@@ -1,6 +1,6 @@
-package fr.pizzeria.model;
+package main.java.fr.pizzeria.model;
 
-import fr.pizzeria.exception.CategoryNotFoundException;
+import main.java.fr.pizzeria.exception.CategoryNotFoundException;
 
 public enum CategoriePizza {
 	

@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm;
+package main.java.fr.pizzeria.ihm;
 
 import java.util.List;
 
@@ -8,8 +8,8 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
-import fr.pizzeria.dao.PizzaDaoMemoire;
-import fr.pizzeria.model.Pizza;
+import main.java.fr.pizzeria.dao.PizzaDaoMemoire;
+import main.java.fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
 	

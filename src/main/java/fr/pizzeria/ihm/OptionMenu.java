@@ -1,6 +1,6 @@
-package fr.pizzeria.ihm;
+package main.java.fr.pizzeria.ihm;
 
-import fr.pizzeria.dao.PizzaDaoMemoire;
+import main.java.fr.pizzeria.dao.PizzaDaoMemoire;
 
 public abstract class OptionMenu {
 	protected String libelle;

@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm;
+package main.java.fr.pizzeria.ihm;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -13,11 +13,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.PizzaDaoMemoire;
-import fr.pizzeria.exception.DeletePizzaException;
-import fr.pizzeria.exception.InvalidPizzaException;
-import fr.pizzeria.model.CbxItem;
-import fr.pizzeria.model.Pizza;
+import main.java.fr.pizzeria.dao.PizzaDaoMemoire;
+import main.java.fr.pizzeria.exception.DeletePizzaException;
+import main.java.fr.pizzeria.exception.InvalidPizzaException;
+import main.java.fr.pizzeria.model.CbxItem;
+import main.java.fr.pizzeria.model.Pizza;
 
 public class SupprimerPizzaOptionMenu extends OptionMenu{
 

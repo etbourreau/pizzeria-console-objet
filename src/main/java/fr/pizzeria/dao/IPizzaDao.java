@@ -1,11 +1,11 @@
-package fr.pizzeria.dao;
+package main.java.fr.pizzeria.dao;
 
 import java.util.List;
 
-import fr.pizzeria.exception.DeletePizzaException;
-import fr.pizzeria.exception.SavePizzaException;
-import fr.pizzeria.exception.UpdatePizzaException;
-import fr.pizzeria.model.Pizza;
+import main.java.fr.pizzeria.exception.DeletePizzaException;
+import main.java.fr.pizzeria.exception.SavePizzaException;
+import main.java.fr.pizzeria.exception.UpdatePizzaException;
+import main.java.fr.pizzeria.model.Pizza;
 
 public interface IPizzaDao {
 	

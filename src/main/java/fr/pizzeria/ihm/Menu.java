@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm;
+package main.java.fr.pizzeria.ihm;
 
 import javax.swing.JFrame;
 import java.awt.Toolkit;
@@ -18,8 +18,8 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.dao.PizzaDaoMemoire;
-import fr.pizzeria.util.*;
+import main.java.fr.pizzeria.dao.PizzaDaoMemoire;
+import main.java.fr.pizzeria.util.*;
 
 import javax.swing.JPanel;
 
