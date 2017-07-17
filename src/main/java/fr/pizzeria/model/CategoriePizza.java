@@ -1,6 +1,6 @@
-package main.java.fr.pizzeria.model;
+package fr.pizzeria.model;
 
-import main.java.fr.pizzeria.exception.CategoryNotFoundException;
+import fr.pizzeria.exception.CategoryNotFoundException;
 
 public enum CategoriePizza {
 	
@@ -30,7 +30,7 @@ public enum CategoriePizza {
 				return cp;
 			}
 		}
-		throw new CategoryNotFoundException("Nom de catégorie "+constantName+" invalide !");
+		throw new CategoryNotFoundException("Nom de catï¿½gorie "+constantName+" invalide !");
 	}
 	
 }

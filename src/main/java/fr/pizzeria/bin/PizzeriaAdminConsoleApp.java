@@ -1,13 +1,10 @@
-package main.java.fr.pizzeria.bin;
+package fr.pizzeria.bin;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Scanner;
 
-import main.java.fr.pizzeria.ihm.Menu;
-import main.java.fr.pizzeria.ihm.OptionMenu;
-import main.java.fr.pizzeria.model.Pizza;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fr.pizzeria.ihm.Menu;
 
 /**
  * @author etbourreau
@@ -15,8 +12,10 @@ import main.java.fr.pizzeria.model.Pizza;
  */
 public class PizzeriaAdminConsoleApp {
 	
+	public static final Logger LOG = LoggerFactory.getLogger(PizzeriaAdminConsoleApp.class);
 	
 	public static void main(String[] args) {
-		Menu mainMenu = new Menu();
+		LOG.info("Pizzeria initialized !");
+		new Menu();
 	}
 }

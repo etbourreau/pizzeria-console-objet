@@ -1,4 +1,4 @@
-package main.java.fr.pizzeria.exception;
+package fr.pizzeria.exception;
 
 public class InvalidPizzaException extends StockageException {
 	
@@ -8,7 +8,7 @@ public class InvalidPizzaException extends StockageException {
 	 * Empty constructor
 	 */
 	public InvalidPizzaException(){
-		super("La pizza spécifiée est invalide");
+		super("La pizza spï¿½cifiï¿½e est invalide");
 	}
 	
 	/**Override constructor

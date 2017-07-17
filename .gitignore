@@ -4,3 +4,4 @@ target/
 .project
 *.jar
 *.class
+app.log

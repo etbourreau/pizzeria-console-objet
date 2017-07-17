@@ -1,4 +1,4 @@
-package main.java.fr.pizzeria.model;
+package fr.pizzeria.model;
 
 import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;

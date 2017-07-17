@@ -1,16 +1,17 @@
-package main.java.fr.pizzeria.dao;
+package fr.pizzeria.dao;
 
 import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import main.java.fr.pizzeria.exception.DeletePizzaException;
-import main.java.fr.pizzeria.exception.InvalidPizzaException;
-import main.java.fr.pizzeria.exception.SavePizzaException;
-import main.java.fr.pizzeria.exception.UpdatePizzaException;
-import main.java.fr.pizzeria.model.CategoriePizza;
-import main.java.fr.pizzeria.model.Pizza;
+import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
+import fr.pizzeria.exception.DeletePizzaException;
+import fr.pizzeria.exception.InvalidPizzaException;
+import fr.pizzeria.exception.SavePizzaException;
+import fr.pizzeria.exception.UpdatePizzaException;
+import fr.pizzeria.model.CategoriePizza;
+import fr.pizzeria.model.Pizza;
 
 /**
  * @author Utilisateur
@@ -18,13 +19,13 @@ import main.java.fr.pizzeria.model.Pizza;
  */
 public class PizzaDaoMemoire implements IPizzaDao{
 	
-	static ArrayList<Pizza> allPizzas = new ArrayList<Pizza>();
+	static ArrayList<Pizza> allPizzas = new ArrayList<>();
 	
 	/**
 	 * Initializes pizzas
 	 */
 	public static void init(){
-		allPizzas.add(new Pizza(0, "PEP", "Pépéroni", 12.50, CategoriePizza.VIANDE));
+		allPizzas.add(new Pizza(0, "PEP", "PÃ©pÃ©roni", 12.50, CategoriePizza.VIANDE));
 		allPizzas.add(new Pizza(1, "MAR", "Margherita", 14.00, CategoriePizza.VEGAN));
 		allPizzas.add(new Pizza(2, "REI", "La Reine", 11.50, CategoriePizza.VIANDE));
 		allPizzas.add(new Pizza(3, "FRO", "La 4 fromages", 12.00, CategoriePizza.VEGAN));
@@ -32,7 +33,7 @@ public class PizzaDaoMemoire implements IPizzaDao{
 		allPizzas.add(new Pizza(5, "SAV", "La savoyarde", 13.00, CategoriePizza.VIANDE));
 		allPizzas.add(new Pizza(6, "ORI", "L'orientale", 13.50, CategoriePizza.VIANDE));
 		allPizzas.add(new Pizza(7, "IND", "L'indienne", 14.00, CategoriePizza.VIANDE));
-		allPizzas.add(new Pizza(8, "TRU", "La truite fumée", 13.50, CategoriePizza.POISSON));
+		allPizzas.add(new Pizza(8, "TRU", "La truite fumÃ©e", 13.50, CategoriePizza.POISSON));
 		
 	}
 	
@@ -55,6 +56,7 @@ public class PizzaDaoMemoire implements IPizzaDao{
 				return p;
 			}
 		}
+		PizzeriaAdminConsoleApp.LOG.debug("Can't find pizza by id {}", id);
 		throw new InvalidPizzaException("Pizza ID "+id+" unknown");
 	}
 	
@@ -69,6 +71,7 @@ public class PizzaDaoMemoire implements IPizzaDao{
 				return p;
 			}
 		}
+		PizzeriaAdminConsoleApp.LOG.debug("Can't find pizza by code {}", code);
 		throw new InvalidPizzaException("Pizza code "+code+" unknown");
 	}
 	
@@ -76,8 +79,8 @@ public class PizzaDaoMemoire implements IPizzaDao{
 	 * @return the next free pizza ID
 	 * @throws InvalidPizzaException if pizza not found
 	 */
-	public Integer getNextAvailableId(){
-		for(int i = 0; i < allPizzas.size()+1; i++){
+	public int getNextAvailableId(){
+		for (int i = 0; i < allPizzas.size() + 1; i++) {
 			try{
 				getPizzaById(i);
 			}catch(InvalidPizzaException exc){
@@ -117,6 +120,7 @@ public class PizzaDaoMemoire implements IPizzaDao{
 		try {
 			current = getPizzaById(pizza.getId());
 		} catch (InvalidPizzaException e) {
+			PizzeriaAdminConsoleApp.LOG.debug("UpdatePizza cannot find desired pizza ({})", e.getMessage());
 			throw new UpdatePizzaException(e.getMessage());
 		}
 		int index = allPizzas.indexOf(current);
@@ -137,6 +141,7 @@ public class PizzaDaoMemoire implements IPizzaDao{
 					
 					);
 		} catch (InvalidPizzaException e) {
+			PizzeriaAdminConsoleApp.LOG.debug("DeletePizza cannot find desired pizza ({})", e.getMessage());
 			throw new DeletePizzaException(e.getMessage());
 		}
 		int index = allPizzas.indexOf(current);

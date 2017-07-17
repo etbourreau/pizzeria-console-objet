@@ -1,4 +1,4 @@
-package main.java.fr.pizzeria.ihm;
+package fr.pizzeria.ihm;
 
 import java.awt.Color;
 
