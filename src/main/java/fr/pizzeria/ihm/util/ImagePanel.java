@@ -1,4 +1,4 @@
-package fr.pizzeria.util;
+package fr.pizzeria.ihm.util;
 
 import java.awt.Graphics;
 import java.awt.Image;

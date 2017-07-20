@@ -1,10 +1,12 @@
-package fr.pizzeria.ihm;
+package fr.pizzeria.ihm.menu;
 
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,8 +19,14 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.dao.PizzaDaoMemoire;
-import fr.pizzeria.util.ImagePanel;
+import fr.pizzeria.ihm.optionmenu.AjouterPizzaOptionMenu;
+import fr.pizzeria.ihm.optionmenu.ListerPizzaOptionMenu;
+import fr.pizzeria.ihm.optionmenu.ListerPizzaParCategorieOptionMenu;
+import fr.pizzeria.ihm.optionmenu.ModifierPizzaOptionMenu;
+import fr.pizzeria.ihm.optionmenu.OptionMenu;
+import fr.pizzeria.ihm.optionmenu.SupprimerPizzaOptionMenu;
+import fr.pizzeria.ihm.util.ImagePanel;
+import fr.pizzeria.model.Pizza;
 
 /**
  * @author etbourreau main menu frame
@@ -35,8 +43,8 @@ public class Menu extends JFrame {
 	/**
 	 * Main menu constructor
 	 */
-	public Menu() {
-		this.dao = new PizzaDaoMemoire();
+	public Menu(IPizzaDao dao) {
+		this.dao = dao;
 		this.init();
 		setContentPane(new ImagePanel(
 				Toolkit.getDefaultToolkit().getImage(Menu.class.getResource("/fr/pizzeria/assets/background.jpg"))));
@@ -123,12 +131,15 @@ public class Menu extends JFrame {
 	 * Initializes default variables
 	 */
 	private void init() {
-		PizzaDaoMemoire.init();
+		this.dao.init();
 		options = new ArrayList<>();
-		options.add(new ListerPizzaOptionMenu(dao, this));
+		options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getId), "Lister les pizzas"));
 		options.add(new AjouterPizzaOptionMenu(dao, this));
 		options.add(new ModifierPizzaOptionMenu(dao, this));
 		options.add(new SupprimerPizzaOptionMenu(dao, this));
+		options.add(new ListerPizzaParCategorieOptionMenu(dao, this));
+		options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getPrix).reversed(),
+				"Lister les pizzas par prix"));
 	}
 
 	/**
@@ -139,12 +150,13 @@ public class Menu extends JFrame {
 	 * @param JMenu
 	 *            which receive options
 	 */
-	private void loadOptionMenus(ArrayList<OptionMenu> options, JMenu menu) {
-		for (OptionMenu om : options) {
-			JMenuItem currentMenuItem = new JMenuItem(om.getLibelle());
-			menu.add(currentMenuItem);
-			currentMenuItem.addActionListener(e -> om.execute());
-		}
+	private void loadOptionMenus(List<OptionMenu> options, JMenu menu) {
+		this.options.stream().forEach(item -> {
+			JMenuItem current = new JMenuItem(item.getLibelle());
+			menu.add(current);
+			current.addActionListener(e -> item.execute());
+
+		});
 	}
 
 	/**

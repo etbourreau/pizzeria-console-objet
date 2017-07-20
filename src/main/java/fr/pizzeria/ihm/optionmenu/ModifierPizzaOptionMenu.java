@@ -1,9 +1,10 @@
-package fr.pizzeria.ihm;
+package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -15,13 +16,15 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.CategoryNotFoundException;
-import fr.pizzeria.exception.InvalidPizzaException;
-import fr.pizzeria.exception.UpdatePizzaException;
+import fr.pizzeria.exception.pizza.CategoryNotFoundException;
+import fr.pizzeria.exception.pizza.InvalidPizzaException;
+import fr.pizzeria.exception.pizza.UpdatePizzaException;
+import fr.pizzeria.ihm.menu.Menu;
+import fr.pizzeria.ihm.util.CbxItem;
+import fr.pizzeria.ihm.util.Decimal;
+import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.CategoriePizza;
-import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
-import fr.pizzeria.util.Decimal;
 
 public class ModifierPizzaOptionMenu extends OptionMenu {
 
@@ -59,6 +62,8 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 		lblPizza.setFont(textFont);
 		lblPizza.setBounds(10, 55, 151, 20);
 		panel.add(lblPizza);
+
+		this.dao.sort(Comparator.comparing(Pizza::getId));
 
 		cbxPizza = new JComboBox<>();
 		cbxPizza.setFont(textFont);
@@ -164,7 +169,7 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 								.equalsIgnoreCase(p.getCategorie().getDescription()))) {
 					dao.updatePizza(new Pizza(id, txtCode.getText(), txtNom.getText(),
 							Decimal.priceRound(Double.parseDouble(txtPrix.getText())),
-							CategoriePizza.findCategoryById(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
+							CategoriePizza.findCategoryByConstantName(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
 					menu.setStatus("La pizza " + txtNom.getText() + " a été modifié !", 0);
 					PizzeriaAdminConsoleApp.LOG.info("Pizza has been modified (" + txtNom.getText() + ")");
 					lock = true;

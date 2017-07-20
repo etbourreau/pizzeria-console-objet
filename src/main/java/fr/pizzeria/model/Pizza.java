@@ -5,7 +5,7 @@ import java.util.Objects;
 
 import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
 
-public class Pizza implements Comparable<Object>{
+public class Pizza {
 	
 	private int id;
 	@ToString
@@ -71,18 +71,6 @@ public class Pizza implements Comparable<Object>{
 
 	public void setCategorie(CategoriePizza categorie) {
 		this.categorie = categorie;
-	}
-	
-	/**Override Comparable's method to sort pizzas in a List of Pizzas
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	@Override
-	public int compareTo(Object p) {
-		if (p instanceof Pizza) {
-			return (id - ((Pizza) p).getId());
-		}else{
-			return 0;
-		}
 	}
 	
 	@Override

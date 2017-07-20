@@ -1,5 +1,6 @@
-package fr.pizzeria.ihm;
+package fr.pizzeria.ihm.optionmenu;
 
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JPanel;
@@ -9,14 +10,18 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.table.DefaultTableModel;
 
 import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.ihm.menu.Menu;
+import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
 	
+	Comparator<Pizza> sorter;
 	
-	public ListerPizzaOptionMenu(IPizzaDao dao, Menu m) {
+	public ListerPizzaOptionMenu(IPizzaDao dao, Menu m, Comparator<Pizza> sorter, String name) {
 		super(dao, m);
-		this.libelle = "Liste des Pizzas";
+		this.libelle = name;
+		this.sorter = sorter;
 	}
 
 	@Override
@@ -30,15 +35,17 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 		panel.setLayout(null);
 		panel.add(scrollPane);
 		
-		JTable table = new JTable();
-		table.setEnabled(false);
-		table.setBounds(0, 0, 460, 260);
-		table.setModel(createModel(dao.findAllPizzas()));
-		table.getColumnModel().getColumn(0).setPreferredWidth(0);
-		table.getColumnModel().getColumn(1).setPreferredWidth(10);
-		table.getColumnModel().getColumn(3).setPreferredWidth(20);
-		table.getColumnModel().getColumn(4).setPreferredWidth(10);
-		scrollPane.setViewportView(table);
+		this.dao.sort(this.sorter);
+
+		JTable tablePizzas = new JTable();
+		tablePizzas.setEnabled(false);
+		tablePizzas.setBounds(0, 0, 460, 260);
+		tablePizzas.setModel(createModel(dao.findAllPizzas()));
+		tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
+		tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
+		tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
+		tablePizzas.getColumnModel().getColumn(4).setPreferredWidth(10);
+		scrollPane.setViewportView(tablePizzas);
 		
 		menu.setContenu(panel);
 		

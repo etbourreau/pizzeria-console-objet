@@ -1,6 +1,6 @@
-package fr.pizzeria.exception;
+package fr.pizzeria.exception.pizza;
 
-public class UpdatePizzaException extends StockageException {
+public class UpdatePizzaException extends PizzaException {
 
 	public UpdatePizzaException(String message) {
 		super(message);

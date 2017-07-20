@@ -1,4 +1,4 @@
-package fr.pizzeria.util;
+package fr.pizzeria.ihm.util;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

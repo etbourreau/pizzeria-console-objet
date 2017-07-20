@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm;
+package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -14,12 +14,14 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.CategoryNotFoundException;
-import fr.pizzeria.exception.SavePizzaException;
+import fr.pizzeria.exception.pizza.CategoryNotFoundException;
+import fr.pizzeria.exception.pizza.SavePizzaException;
+import fr.pizzeria.ihm.menu.Menu;
+import fr.pizzeria.ihm.util.CbxItem;
+import fr.pizzeria.ihm.util.Decimal;
+import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.CategoriePizza;
-import fr.pizzeria.model.CbxItem;
 import fr.pizzeria.model.Pizza;
-import fr.pizzeria.util.Decimal;
 
 public class AjouterPizzaOptionMenu extends OptionMenu {
 
@@ -132,7 +134,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 						String code = txtCode.getText();
 						String nom = txtNom.getText().trim();
 						CategoriePizza categ = CategoriePizza
-								.findCategoryById(((CbxItem) cbxCategorie.getSelectedItem()).getValue());
+								.findCategoryByConstantName(((CbxItem) cbxCategorie.getSelectedItem()).getValue());
 						Double prix = Decimal.priceRound(Double.parseDouble(txtPrix.getText()));
 
 						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), code, nom, prix, categ));

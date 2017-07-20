@@ -1,7 +1,8 @@
-package fr.pizzeria.ihm;
+package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -13,9 +14,11 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.DeletePizzaException;
-import fr.pizzeria.exception.InvalidPizzaException;
-import fr.pizzeria.model.CbxItem;
+import fr.pizzeria.exception.pizza.DeletePizzaException;
+import fr.pizzeria.exception.pizza.InvalidPizzaException;
+import fr.pizzeria.ihm.menu.Menu;
+import fr.pizzeria.ihm.util.CbxItem;
+import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.Pizza;
 
 public class SupprimerPizzaOptionMenu extends OptionMenu {
@@ -46,6 +49,8 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 		lblPizza.setFont(textFont);
 		lblPizza.setBounds(10, 102, 151, 20);
 		panel.add(lblPizza);
+
+		this.dao.sort(Comparator.comparing(Pizza::getId));
 
 		cbxPizza = new JComboBox<>();
 		cbxPizza.setFont(textFont);

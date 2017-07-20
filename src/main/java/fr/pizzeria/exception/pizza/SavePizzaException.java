@@ -1,6 +1,6 @@
-package fr.pizzeria.exception;
+package fr.pizzeria.exception.pizza;
 
-public class SavePizzaException extends StockageException {
+public class SavePizzaException extends PizzaException {
 
 	private static final long serialVersionUID = 1L;
 	
