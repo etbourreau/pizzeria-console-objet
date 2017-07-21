@@ -18,7 +18,7 @@ public class PizzeriaAdminInterfaceApp {
 	
 	public static final Logger LOG = LoggerFactory.getLogger(PizzeriaAdminInterfaceApp.class);
 	
-	public static void main(String[] args) throws SQLException {
+	public static void main(String[] args) {
 		LOG.info("Pizzeria started !");
 
 		final String DB_DRIVER = "com.mysql.jdbc.Driver";
@@ -26,7 +26,11 @@ public class PizzeriaAdminInterfaceApp {
 		final String DB_USER = "pizzayolo";
 		final String DB_PASSWORD = "pizza";
 
-		IPizzaDao dao = new PizzaDaoDb(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
-		new Menu(dao);
+		try {
+			IPizzaDao dao = new PizzaDaoDb(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+			new Menu(dao);
+		} catch (ClassNotFoundException | SQLException e) {
+			LOG.info("Can't launch application", e);
+		}
 	}
 }

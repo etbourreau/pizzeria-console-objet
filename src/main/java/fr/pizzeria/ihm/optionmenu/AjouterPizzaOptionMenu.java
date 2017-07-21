@@ -14,8 +14,6 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.pizza.CategoryNotFoundException;
-import fr.pizzeria.exception.pizza.SavePizzaException;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.CbxItem;
 import fr.pizzeria.ihm.util.Decimal;
@@ -133,17 +131,17 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 					try {
 						String code = txtCode.getText();
 						String nom = txtNom.getText().trim();
-						CategoriePizza categ = CategoriePizza
-								.findCategoryByConstantName(((CbxItem) cbxCategorie.getSelectedItem()).getValue());
+					CategoriePizza categ = CategoriePizza.values()[Integer
+							.valueOf(((CbxItem) cbxCategorie.getSelectedItem()).getValue())];
 						Double prix = Decimal.priceRound(Double.parseDouble(txtPrix.getText()));
 
-						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), code, nom, prix, categ));
+					dao.saveNewPizza(new Pizza(null, code, nom, prix, categ));
 					menu.setStatus("Pizza " + nom + " ajoutée !", 0);
 						PizzeriaAdminInterfaceApp.LOG.info("New pizza has been added ({}, {}, {}, {})", code, nom, prix,
 								categ.getDescription());
 						initFields();
 						fillCategories(CategoriePizza.values(), 0);
-					} catch (SavePizzaException | NumberFormatException | CategoryNotFoundException exc) {
+				} catch (NumberFormatException exc) {
 						PizzeriaAdminInterfaceApp.LOG.debug("Can't add new pizza ({})", exc.getMessage());
 					menu.setStatus("La pizza " + txtNom.getText() + " n'a pas pu être ajouté !", 2);
 					}

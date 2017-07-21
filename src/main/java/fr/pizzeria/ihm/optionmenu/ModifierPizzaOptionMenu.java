@@ -4,7 +4,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.Comparator;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -16,7 +16,6 @@ import javax.swing.SwingConstants;
 
 import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.exception.pizza.CategoryNotFoundException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.exception.pizza.UpdatePizzaException;
 import fr.pizzeria.ihm.menu.Menu;
@@ -62,8 +61,6 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 		lblPizza.setFont(textFont);
 		lblPizza.setBounds(10, 55, 151, 20);
 		panel.add(lblPizza);
-
-		this.dao.sort(Comparator.comparing(Pizza::getId));
 
 		cbxPizza = new JComboBox<>();
 		cbxPizza.setFont(textFont);
@@ -143,11 +140,11 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 		try {
 			fillCategories(CategoriePizza.values(),
 					dao.getPizzaById(Integer.parseInt((((CbxItem) cbxPizza.getSelectedItem()).getValue())))
-							.getCategorie().toString());
+							.get().getCategorie().toString());
 		} catch (NumberFormatException exc) {
 			PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString,
 					((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
-		} catch (InvalidPizzaException exc) {
+		} catch (InvalidPizzaException | SQLException exc) {
 			menu.setStatus("La pizza sélectionnée est invalide", 2);
 			PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 		}
@@ -162,14 +159,14 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 		btnValider.addActionListener(e -> {
 			try {
 				int id = Integer.parseInt(((CbxItem) cbxPizza.getSelectedItem()).getValue());
-				Pizza p = dao.getPizzaById(id);
+				Pizza p = dao.getPizzaById(id).get();
 				if (validFields() && (!txtCode.getText().equals(p.getCode()) || !txtNom.getText().equals(p.getNom())
 						|| Decimal.priceRound(Double.parseDouble(txtPrix.getText())) != p.getPrix()
 						|| !((CbxItem) cbxCategorie.getSelectedItem()).getLabel()
 								.equalsIgnoreCase(p.getCategorie().getDescription()))) {
 					dao.updatePizza(new Pizza(id, txtCode.getText(), txtNom.getText(),
 							Decimal.priceRound(Double.parseDouble(txtPrix.getText())),
-							CategoriePizza.findCategoryByConstantName(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
+							CategoriePizza.valueOf(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
 					menu.setStatus("La pizza " + txtNom.getText() + " a été modifié !", 0);
 					PizzeriaAdminInterfaceApp.LOG.info("Pizza has been modified (" + txtNom.getText() + ")");
 					lock = true;
@@ -179,7 +176,7 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 			} catch (NumberFormatException | InvalidPizzaException exc) {
 				PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString,
 						((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
-			} catch (UpdatePizzaException | CategoryNotFoundException exc) {
+			} catch (UpdatePizzaException | SQLException exc) {
 				String msg = "Can't modify pizza " + txtNom.getText();
 				menu.setStatus(msg, 2);
 				PizzeriaAdminInterfaceApp.LOG.debug(msg + " : {}", exc.getMessage());
@@ -201,10 +198,10 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 				try {
 					fillCategories(CategoriePizza.values(),
 							dao.getPizzaById(Integer.parseInt((((CbxItem) cbxPizza.getSelectedItem()).getValue())))
-									.getCategorie().toString());
+									.get().getCategorie().toString());
 				} catch (NumberFormatException exc) {
 					PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString, ((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
-				} catch (InvalidPizzaException exc) {
+				} catch (InvalidPizzaException | SQLException exc) {
 					menu.setStatus("La pizza sélectionnée est invalide", 2);
 					PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 				}
@@ -225,14 +222,14 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 		int id = Integer.parseInt(((CbxItem) cbxPizza.getSelectedItem()).getValue());
 		Pizza p;
 		try {
-			p = dao.getPizzaById(id);
+			p = dao.getPizzaById(id).get();
 			txtCode.setText(p.getCode());
 			txtCode.setBackground(new Color(1f, 1f, 1f));
 			txtNom.setText(p.getNom());
 			txtNom.setBackground(new Color(1f, 1f, 1f));
 			txtPrix.setText(String.valueOf(p.getPrix()));
 			txtPrix.setBackground(new Color(1f, 1f, 1f));
-		} catch (InvalidPizzaException exc) {
+		} catch (InvalidPizzaException | SQLException exc) {
 			menu.setStatus("Pizza Invalide", 2);
 			PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 		}
@@ -275,12 +272,18 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 	 *            by default
 	 */
 	private void fillPizzas(IPizzaDao dao, int selectedIndex) {
-		List<Pizza> pizzas = dao.findAllPizzas();
-		cbxPizza.removeAllItems();
-		for (Pizza p : pizzas) {
-			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId() + " " + p.getNom()));
+		List<Pizza> pizzas;
+		try {
+			pizzas = dao.findAllPizzas();
+			cbxPizza.removeAllItems();
+			for (Pizza p : pizzas) {
+				this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId() + " " + p.getNom()));
+			}
+			cbxPizza.setSelectedIndex(selectedIndex);
+		} catch (SQLException e) {
+			menu.setStatus("La liste des pizza est invalide", 2);
+			PizzeriaAdminInterfaceApp.LOG.debug("Can't fill pizzas", e);
 		}
-		cbxPizza.setSelectedIndex(selectedIndex);
 	}
 
 	private void fillCategories(CategoriePizza[] categories, String selectedCategoryName) {

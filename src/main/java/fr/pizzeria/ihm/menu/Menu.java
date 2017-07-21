@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -22,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.dao.PizzaDaoDb;
 import fr.pizzeria.ihm.optionmenu.AjouterPizzaOptionMenu;
 import fr.pizzeria.ihm.optionmenu.ListerPizzaOptionMenu;
 import fr.pizzeria.ihm.optionmenu.ListerPizzaParCategorieOptionMenu;
@@ -38,12 +36,12 @@ import fr.pizzeria.model.Pizza;
 public class Menu extends JFrame {
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger LOG = LoggerFactory.getLogger(Menu.class);
+	public static final Logger LOG = LoggerFactory.getLogger(Menu.class);
 
 	private JLabel statusBar;
 	private static boolean busy = false;
 	private ArrayList<OptionMenu> options;
-	private IPizzaDao dao;
+	private transient IPizzaDao dao;
 	private JPanel panelContenu;
 
 	/**
@@ -66,13 +64,6 @@ public class Menu extends JFrame {
 					} catch (InterruptedException exc) {
 						LOG.debug("Waiting error ({})", exc.getMessage());
 						Thread.currentThread().interrupt();
-					}
-				}
-				if (dao instanceof PizzaDaoDb) {
-					try {
-						((PizzaDaoDb) dao).closeConnection();
-					} catch (SQLException e) {
-						LOG.debug("Can't close connexion : " + e.getMessage());
 					}
 				}
 				LOG.info("Pizzeria closed !");
@@ -105,13 +96,6 @@ public class Menu extends JFrame {
 				} catch (InterruptedException exc) {
 					LOG.debug("Waiting error ({})", exc.getMessage());
 					Thread.currentThread().interrupt();
-				}
-			}
-			if (dao instanceof PizzaDaoDb) {
-				try {
-					((PizzaDaoDb) dao).closeConnection();
-				} catch (SQLException e) {
-					LOG.debug("Can't close connexion : " + e.getMessage());
 				}
 			}
 			LOG.info("Pizzeria closed !");
@@ -151,19 +135,14 @@ public class Menu extends JFrame {
 	 * Initializes default variables
 	 */
 	private void init() {
-		try {
-			this.dao.init();
-			options = new ArrayList<>();
-			options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getId), "Lister les pizzas"));
-			options.add(new AjouterPizzaOptionMenu(dao, this));
-			options.add(new ModifierPizzaOptionMenu(dao, this));
-			options.add(new SupprimerPizzaOptionMenu(dao, this));
-			options.add(new ListerPizzaParCategorieOptionMenu(dao, this));
-			options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getPrix).reversed(),
+		options = new ArrayList<>();
+		options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getId), "Lister les pizzas"));
+		options.add(new AjouterPizzaOptionMenu(dao, this));
+		options.add(new ModifierPizzaOptionMenu(dao, this));
+		options.add(new SupprimerPizzaOptionMenu(dao, this));
+		options.add(new ListerPizzaParCategorieOptionMenu(dao, this));
+		options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getPrix).reversed(),
 				"Lister les pizzas par prix"));
-		} catch (SQLException e) {
-			setStatus("Connexion à la base de données impossible", 2);
-		}
 
 	}
 
@@ -176,7 +155,7 @@ public class Menu extends JFrame {
 	 *            which receive options
 	 */
 	private void loadOptionMenus(List<OptionMenu> options, JMenu menu) {
-		this.options.stream().forEach(item -> {
+		options.stream().forEach(item -> {
 			JMenuItem current = new JMenuItem(item.getLibelle());
 			menu.add(current);
 			current.addActionListener(e -> item.execute());

@@ -2,7 +2,7 @@ package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.util.Comparator;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -50,8 +50,6 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 		lblPizza.setBounds(10, 102, 151, 20);
 		panel.add(lblPizza);
 
-		this.dao.sort(Comparator.comparing(Pizza::getId));
-
 		cbxPizza = new JComboBox<>();
 		cbxPizza.setFont(textFont);
 		cbxPizza.setBounds(171, 101, 175, 23);
@@ -63,7 +61,7 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 			int id = Integer.parseInt(((CbxItem) cbxPizza.getSelectedItem()).getValue());
 			Pizza p;
 			try {
-				p = dao.getPizzaById(id);
+				p = dao.getPizzaById(id).get();
 				if (JOptionPane.showConfirmDialog((Component) null,
 						"Voulez-vous vraiment supprimer la pizza " + p.getNom() + " ?", "alert",
 						JOptionPane.OK_CANCEL_OPTION) == 0) {
@@ -72,7 +70,7 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 					PizzeriaAdminInterfaceApp.LOG.info("Pizza has been removed (" + p.getNom() + ")");
 					fillPizzas(dao, 0);
 				}
-			} catch (DeletePizzaException | InvalidPizzaException exc) {
+			} catch (DeletePizzaException | InvalidPizzaException | SQLException exc) {
 				menu.setStatus("La pizza n'a pas pu être supprimé !", 2);
 				PizzeriaAdminInterfaceApp.LOG.debug("Can't remove pizza : {}", exc.getMessage());
 			}
@@ -101,12 +99,18 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 	 *            by default
 	 */
 	private void fillPizzas(IPizzaDao dao, int selectedIndex) {
-		List<Pizza> pizzas = dao.findAllPizzas();
-		cbxPizza.removeAllItems();
-		for (Pizza p : pizzas) {
-			this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId() + " " + p.getNom()));
+		List<Pizza> pizzas;
+		try {
+			pizzas = dao.findAllPizzas();
+			cbxPizza.removeAllItems();
+			for (Pizza p : pizzas) {
+				this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId() + " " + p.getNom()));
+			}
+			cbxPizza.setSelectedIndex(selectedIndex);
+		} catch (SQLException e) {
+			menu.setStatus("La liste des pizza est invalide", 2);
+			PizzeriaAdminInterfaceApp.LOG.debug("Can't fill pizzas", e);
 		}
-		cbxPizza.setSelectedIndex(selectedIndex);
 	}
 
 }

@@ -1,6 +1,9 @@
 package fr.pizzeria.ihm.optionmenu;
 
+import java.sql.SQLException;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,17 +37,24 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 		panel.setLayout(null);
 		panel.add(scrollPane);
 		
-		this.dao.sort(this.sorter);
+		List<Pizza> pizzas;
+		try {
+			pizzas = dao.findAllPizzas();
+			Collections.sort(pizzas, sorter);
 
-		JTable tablePizzas = new JTable();
-		tablePizzas.setEnabled(false);
-		tablePizzas.setBounds(0, 0, 460, 260);
-		tablePizzas.setModel(JFrameTools.createPizzaModel(dao.findAllPizzas()));
-		tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
-		tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
-		tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
-		tablePizzas.getColumnModel().getColumn(4).setPreferredWidth(10);
-		scrollPane.setViewportView(tablePizzas);
+			JTable tablePizzas = new JTable();
+			tablePizzas.setEnabled(false);
+			tablePizzas.setBounds(0, 0, 460, 260);
+			tablePizzas.setModel(JFrameTools.createPizzaModel(pizzas));
+			tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
+			tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
+			tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
+			tablePizzas.getColumnModel().getColumn(4).setPreferredWidth(10);
+			scrollPane.setViewportView(tablePizzas);
+		} catch (SQLException e) {
+			menu.setStatus("Ne peut pas afficher les pizzas", 2);
+			Menu.LOG.debug("Can't show pizzas", e);
+		}
 		
 		menu.setContenu(panel);
 		

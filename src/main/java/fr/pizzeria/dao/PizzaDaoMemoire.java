@@ -46,14 +46,8 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws InvalidPizzaException
 	 *             if pizza not found
 	 */
-	public Pizza getPizzaById(int id) throws InvalidPizzaException {
-		Optional<Pizza> found = allPizzas.stream().filter(p -> p.getId() == id).findAny();
-		if (found.isPresent()) {
-			return found.get();
-		} else {
-			LOG.debug("Can't find pizza by id {}", id);
-			throw new InvalidPizzaException("Pizza ID " + id + " unknown");
-		}
+	public Optional<Pizza> getPizzaById(int id) {
+		return allPizzas.stream().filter(p -> p.getId() == id).findAny();
 	}
 
 	/**
@@ -63,14 +57,8 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws InvalidPizzaException
 	 *             if pizza not found
 	 */
-	public Pizza getPizzaByCode(String code) throws InvalidPizzaException {
-		Optional<Pizza> found = allPizzas.stream().filter(p -> p.getCode().equalsIgnoreCase(code)).findAny();
-		if (!found.isPresent()) {
-			LOG.debug("Can't find pizza by code {}", code);
-			throw new InvalidPizzaException("Pizza code " + code + " unknown");
-		} else {
-			return found.get();
-		}
+	public Optional<Pizza> getPizzaByCode(String code) {
+		return allPizzas.stream().filter(p -> p.getCode().equalsIgnoreCase(code)).findAny();
 
 	}
 
@@ -116,16 +104,14 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws UpdatePizzaException
 	 *             if update fails
 	 */
-	public void updatePizza(Pizza pizza) throws UpdatePizzaException {
-		Pizza current;
-		try {
-			current = getPizzaById(pizza.getId());
-		} catch (InvalidPizzaException e) {
-			LOG.debug("UpdatePizza cannot find desired pizza ({})", e.getMessage());
-			throw new UpdatePizzaException(e.getMessage());
+	public void updatePizza(Pizza pizza) {
+		Optional<Pizza> current = getPizzaById(pizza.getId());
+		if (current.isPresent()) {
+			int index = allPizzas.indexOf(current.get());
+			allPizzas.set(index, pizza);
+		} else {
+			throw new UpdatePizzaException("Can't update pizza : pizza not found");
 		}
-		int index = allPizzas.indexOf(current);
-		allPizzas.set(index, pizza);
 	}
 
 	/**
@@ -138,26 +124,18 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws SelectableChannel
 	 *             if deletion fails
 	 */
-	public void deletePizza(Pizza pizza) throws DeletePizzaException {
-		Pizza current;
-		try {
-			current = getPizzaById(pizza.getId()
-
-			);
-		} catch (InvalidPizzaException e) {
-			LOG.debug("DeletePizza cannot find desired pizza ({})", e.getMessage());
-			throw new DeletePizzaException(e.getMessage());
+	public void deletePizza(Pizza pizza) {
+		Optional<Pizza> current = getPizzaById(pizza.getId());
+		if (current.isPresent()) {
+			int index = allPizzas.indexOf(current);
+			allPizzas.remove(index);
+		} else {
+			throw new DeletePizzaException("Can't delete pizza : pizza not found");
 		}
-		int index = allPizzas.indexOf(current);
-		allPizzas.remove(index);
 	}
 
 	public List<Pizza> findPizzasByCategory(CategoriePizza cp) {
 		return allPizzas.stream().filter(p -> p.getCategorie().equals(cp)).collect(Collectors.toList());
-	}
-
-	public void init() {
-		LOG.debug("DaoMemoire initialized");
 	}
 
 }

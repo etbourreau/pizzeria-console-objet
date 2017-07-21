@@ -1,34 +1,26 @@
 package fr.pizzeria.dao;
 
 import java.sql.SQLException;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
-import fr.pizzeria.exception.pizza.DeletePizzaException;
-import fr.pizzeria.exception.pizza.InvalidPizzaException;
-import fr.pizzeria.exception.pizza.SavePizzaException;
-import fr.pizzeria.exception.pizza.UpdatePizzaException;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
 public interface IPizzaDao {
 	
-	List<Pizza> findAllPizzas();
-	List<Pizza> findPizzasByCategory(CategoriePizza cp);
+	List<Pizza> findAllPizzas() throws SQLException;
 
-	void init() throws SQLException;
+	List<Pizza> findPizzasByCategory(CategoriePizza cp) throws SQLException;
 
-	public void sort(Comparator<Pizza> sorter);
+	void saveNewPizza(Pizza pizza);
 
-	void saveNewPizza(Pizza pizza) throws SavePizzaException;
-	void updatePizza(Pizza pizza) throws UpdatePizzaException;
-	void deletePizza(Pizza pizza) throws DeletePizzaException;
+	void updatePizza(Pizza pizza);
 
-	int getNextAvailableId();
+	void deletePizza(Pizza pizza);
 
-	Pizza getPizzaById(int parseInt) throws InvalidPizzaException;
+	Optional<Pizza> getPizzaById(int parseInt) throws SQLException;
 
-	Pizza getPizzaByCode(String code) throws InvalidPizzaException;
-
+	Optional<Pizza> getPizzaByCode(String code) throws SQLException;
 	
 }

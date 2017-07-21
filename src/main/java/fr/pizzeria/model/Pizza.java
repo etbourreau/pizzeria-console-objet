@@ -1,20 +1,13 @@
 package fr.pizzeria.model;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
-
-import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 
 public class Pizza {
 	
-	private int id;
-	@ToString
+	private Integer id;
 	private String code;
-	@ToString(upperCase = false)
 	private String nom;
-	@ToString
 	private Double prix;
-	@ToString
 	CategoriePizza categorie;
 
 	/**Pizza's constructor
@@ -24,7 +17,7 @@ public class Pizza {
 	 * @param prix is the price of the pizza
 	 * @param categorie is the pizza's CategoriePizza
 	 */
-	public Pizza(int id, String code, String nom, Double prix, CategoriePizza categorie) {
+	public Pizza(Integer id, String code, String nom, Double prix, CategoriePizza categorie) {
 		super();
 		this.id = id;
 		this.code = code.toUpperCase();
@@ -33,11 +26,11 @@ public class Pizza {
 		this.categorie = categorie;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -85,28 +78,5 @@ public class Pizza {
 	@Override
 	public int hashCode() {
 		return Objects.hash(this.id, this.code, this.nom, this.prix, this.categorie);
-	}
-
-	/** return format string with annotated fields
-	 * @see java.lang.Object#toString()
-	 */
-	public String toString(){
-		StringBuilder sb = new StringBuilder();
-		boolean first = true;
-		for(Field f : Pizza.class.getDeclaredFields()){
-			if(f.isAnnotationPresent(ToString.class)){
-				if(first) first = false; else sb.append(" ");
-				try {
-					if(f.getDeclaredAnnotation(ToString.class).upperCase()){
-						sb.append(String.valueOf(f.get(this)).toUpperCase());
-					}else{
-						sb.append(String.valueOf(f.get(this)));
-					}
-				} catch (IllegalArgumentException | IllegalAccessException e) {
-					PizzeriaAdminInterfaceApp.LOG.debug("Error accessing toString function : {}", e.getMessage());
-				}
-			}
-		}
-		return sb.toString();
 	}
 }
