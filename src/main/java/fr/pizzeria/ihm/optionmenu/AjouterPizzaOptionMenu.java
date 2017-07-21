@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
+import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.exception.pizza.CategoryNotFoundException;
 import fr.pizzeria.exception.pizza.SavePizzaException;
@@ -139,12 +139,12 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 
 						dao.saveNewPizza(new Pizza(dao.getNextAvailableId(), code, nom, prix, categ));
 					menu.setStatus("Pizza " + nom + " ajoutée !", 0);
-						PizzeriaAdminConsoleApp.LOG.info("New pizza has been added ({}, {}, {}, {})", code, nom, prix,
+						PizzeriaAdminInterfaceApp.LOG.info("New pizza has been added ({}, {}, {}, {})", code, nom, prix,
 								categ.getDescription());
 						initFields();
 						fillCategories(CategoriePizza.values(), 0);
 					} catch (SavePizzaException | NumberFormatException | CategoryNotFoundException exc) {
-						PizzeriaAdminConsoleApp.LOG.debug("Can't add new pizza ({})", exc.getMessage());
+						PizzeriaAdminInterfaceApp.LOG.debug("Can't add new pizza ({})", exc.getMessage());
 					menu.setStatus("La pizza " + txtNom.getText() + " n'a pas pu être ajouté !", 2);
 					}
 				}

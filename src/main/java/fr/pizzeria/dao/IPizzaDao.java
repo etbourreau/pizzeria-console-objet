@@ -1,5 +1,6 @@
 package fr.pizzeria.dao;
 
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface IPizzaDao {
 	List<Pizza> findAllPizzas();
 	List<Pizza> findPizzasByCategory(CategoriePizza cp);
 
-	void init();
+	void init() throws SQLException;
 
 	public void sort(Comparator<Pizza> sorter);
 

@@ -3,15 +3,18 @@ package dao;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.dao.PizzaDaoDb;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.exception.pizza.SavePizzaException;
@@ -19,12 +22,18 @@ import fr.pizzeria.exception.pizza.UpdatePizzaException;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
-public class TestDaoMemoire {
+public class TestDaoDb {
 
-	private IPizzaDao dao;
+	private PizzaDaoDb dao;
+	private Connection c;
 
 	@Before
-	public void setUp() {
+	public void setUp() throws ClassNotFoundException, SQLException {
+		this.c = generateConnectionWithData();
+		this.dao = new PizzaDaoDb(c);
+	}
+
+	private Connection generateConnectionWithData() throws SQLException, ClassNotFoundException {
 		List<Pizza> jeuEssais = new ArrayList<>();
 		jeuEssais.add(new Pizza(0, "PEP", "Pépéroni", 12.50, CategoriePizza.VIANDE));
 		jeuEssais.add(new Pizza(1, "MAR", "Margherita", 14.00, CategoriePizza.VEGAN));
@@ -36,12 +45,42 @@ public class TestDaoMemoire {
 		jeuEssais.add(new Pizza(7, "IND", "L'indienne", 14.00, CategoriePizza.VIANDE));
 		jeuEssais.add(new Pizza(8, "TRU", "La truite fumée", 13.50, CategoriePizza.POISSON));
 
-		this.dao = new PizzaDaoMemoire(jeuEssais);
+		String DB_DRIVER = "org.h2.Driver";
+		String DB_CONNECTION = "jdbc:h2:mem:test";
+		String DB_USER = "sa";
+		String DB_PASSWORD = "";
+		Class.forName(DB_DRIVER);
+		Connection c = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
+
+		String createPizza = "CREATE TABLE PIZZA(id int primary key auto_increment, code varchar(255) UNIQUE, nom varchar(255), prix double(8), idCategorie int(11))";
+		String insertPizza = "INSERT INTO PIZZA(id, code, nom, prix, idCategorie) VALUES (?,?,?,?,?)";
+
+		try (PreparedStatement ps = c.prepareStatement(createPizza)) {
+			ps.executeUpdate();
+		}
+		try (PreparedStatement ps = c.prepareStatement(insertPizza)) {
+			for (Pizza p : jeuEssais) {
+				ps.setInt(1, p.getId());
+				ps.setString(2, p.getCode());
+				ps.setString(3, p.getNom());
+				ps.setDouble(4, p.getPrix());
+				ps.setInt(5, p.getCategorie().getId());
+				ps.executeUpdate();
+			}
+		}
+
+		return c;
+	}
+
+	@After
+	public void tearDown() throws SQLException {
+		c.close();
 	}
 
 	@Test
-	public void testInit() {
-		assertEquals(dao.findAllPizzas().size(), 9);
+	public void testInit() throws SQLException {
+		this.dao.init();
+		assertEquals(9, dao.findAllPizzas().size());
 	}
 
 	@Test
@@ -72,7 +111,7 @@ public class TestDaoMemoire {
 	}
 
 	@Test
-	public void testFindPizzasByCategoryInvalidPizzaException() {
+	public void testFindPizzasByCategory() {
 		CategoriePizza cp = CategoriePizza.VIANDE;
 		List<Pizza> list = this.dao.findPizzasByCategory(cp);
 		assertEquals(list.size(), 6);
@@ -87,6 +126,7 @@ public class TestDaoMemoire {
 	@Test
 	public void testSaveNewPizza() throws SavePizzaException {
 		this.dao.saveNewPizza(new Pizza(9, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE));
+		assertEquals(this.dao.findAllPizzas().size(), 10);
 	}
 
 	@Test(expected = SavePizzaException.class)
@@ -118,13 +158,8 @@ public class TestDaoMemoire {
 
 	@Test(expected = DeletePizzaException.class)
 	public void testDeletePizzaInvalidId() throws DeletePizzaException {
-		try {
-			this.dao.init();
-			Pizza p = new Pizza(10, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE);
-			this.dao.deletePizza(p);
-		} catch (SQLException e) {
-			assertThat(false).isTrue();
-		}
+		Pizza p = new Pizza(10, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE);
+		this.dao.deletePizza(p);
 	}
 
 }

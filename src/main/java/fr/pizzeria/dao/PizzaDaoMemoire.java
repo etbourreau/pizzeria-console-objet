@@ -28,8 +28,8 @@ public class PizzaDaoMemoire implements IPizzaDao {
 
 	private List<Pizza> allPizzas = new ArrayList<>();
 
-	public PizzaDaoMemoire(List<Pizza> jeuEssais) {
-		allPizzas = jeuEssais;
+	public PizzaDaoMemoire(List<Pizza> pizzas) {
+		allPizzas = pizzas;
 	}
 
 	/**

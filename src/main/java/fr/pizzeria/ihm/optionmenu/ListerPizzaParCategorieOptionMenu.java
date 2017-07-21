@@ -2,7 +2,6 @@ package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Font;
 import java.util.Comparator;
-import java.util.List;
 import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
@@ -12,7 +11,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
-import javax.swing.table.DefaultTableModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +20,7 @@ import fr.pizzeria.exception.pizza.CategoryNotFoundException;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.CbxItem;
 import fr.pizzeria.ihm.util.DefaultPanel;
+import fr.pizzeria.ihm.util.JFrameTools;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
@@ -62,7 +61,6 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 		cbxCategory.setBounds(171, 41, 175, 23);
 		panel.add(cbxCategory);
 		fillCategories(dao, 0);
-		cbxCategory.setSelectedIndex(1);
 
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -92,34 +90,13 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 	private void fillTablePizzas() {
 		try {
 			int categoryId = Integer.parseInt(((CbxItem) cbxCategory.getSelectedItem()).getValue());
-			tablePizzas.setModel(createModel(dao.findPizzasByCategory(CategoriePizza.findCategoryById(categoryId))));
+			tablePizzas.setModel(JFrameTools
+					.createPizzaModel(dao.findPizzasByCategory(CategoriePizza.findCategoryById(categoryId))));
 		} catch (CategoryNotFoundException exc) {
 			String categoryName = ((CbxItem) cbxCategory.getSelectedItem()).getLabel();
 			menu.setStatus("La catégorie \"" + categoryName + "\" est invalide", 2);
 			LOG.info("La catégorie \"" + categoryName + "\" est invalide");
 		}
-	}
-
-	/**
-	 * Creates the JTable model to fill the pizzas JTable
-	 * 
-	 * @param ArrayList
-	 *            of pizzas
-	 * @return the generated tableModel
-	 */
-	private DefaultTableModel createModel(List<Pizza> pizzas) {
-		String[] columnsTable = { "ID", "Code", "Nom", "Catégorie", "Prix" };
-		String[][] dataTable = new String[pizzas.size()][columnsTable.length];
-		int[] index = { 0 };
-		pizzas.forEach(p -> {
-			dataTable[index[0]][0] = String.valueOf(p.getId());
-			dataTable[index[0]][1] = p.getCode();
-			dataTable[index[0]][2] = p.getNom();
-			dataTable[index[0]][3] = p.getCategorie().getDescription();
-			dataTable[index[0]][4] = String.valueOf(p.getPrix()) + "€";
-			index[0]++;
-		});
-		return new DefaultTableModel(dataTable, columnsTable);
 	}
 
 	/**

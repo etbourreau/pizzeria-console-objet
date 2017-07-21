@@ -1,17 +1,16 @@
 package fr.pizzeria.ihm.optionmenu;
 
 import java.util.Comparator;
-import java.util.List;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.table.DefaultTableModel;
 
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.DefaultPanel;
+import fr.pizzeria.ihm.util.JFrameTools;
 import fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
@@ -40,7 +39,7 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 		JTable tablePizzas = new JTable();
 		tablePizzas.setEnabled(false);
 		tablePizzas.setBounds(0, 0, 460, 260);
-		tablePizzas.setModel(createModel(dao.findAllPizzas()));
+		tablePizzas.setModel(JFrameTools.createPizzaModel(dao.findAllPizzas()));
 		tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
 		tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
 		tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
@@ -52,23 +51,6 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 		return true;
 	}
 	
-	/**Creates the JTable model to fill the pizzas JTable
-	 * @param ArrayList of pizzas
-	 * @return the generated tableModel
-	 */
-	private DefaultTableModel createModel(List<Pizza> pizzas) {
-		String[] columnsTable = { "ID", "Code", "Nom", "Catégorie", "Prix" };
-		String[][] dataTable = new String[pizzas.size()][columnsTable.length];
-		int index = 0;
-		for(Pizza p : pizzas){
-			dataTable[index][0] = String.valueOf(p.getId());
-			dataTable[index][1] = p.getCode();
-			dataTable[index][2] = p.getNom();
-			dataTable[index][3] = p.getCategorie().getDescription();
-			dataTable[index][4] = String.valueOf(p.getPrix()) + "€";
-			index++;
-		}
-		return new DefaultTableModel(dataTable, columnsTable);
-	}
+
 
 }

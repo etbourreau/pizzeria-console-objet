@@ -3,7 +3,7 @@ package fr.pizzeria.model;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
-import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
+import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 
 public class Pizza {
 	
@@ -103,7 +103,7 @@ public class Pizza {
 						sb.append(String.valueOf(f.get(this)));
 					}
 				} catch (IllegalArgumentException | IllegalAccessException e) {
-					PizzeriaAdminConsoleApp.LOG.debug("Error accessing toString function : {}", e.getMessage());
+					PizzeriaAdminInterfaceApp.LOG.debug("Error accessing toString function : {}", e.getMessage());
 				}
 			}
 		}

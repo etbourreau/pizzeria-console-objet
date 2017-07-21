@@ -14,7 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
+import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.exception.pizza.CategoryNotFoundException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
@@ -145,11 +145,11 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 					dao.getPizzaById(Integer.parseInt((((CbxItem) cbxPizza.getSelectedItem()).getValue())))
 							.getCategorie().toString());
 		} catch (NumberFormatException exc) {
-			PizzeriaAdminConsoleApp.LOG.debug(invalidConversionString,
+			PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString,
 					((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
 		} catch (InvalidPizzaException exc) {
 			menu.setStatus("La pizza sélectionnée est invalide", 2);
-			PizzeriaAdminConsoleApp.LOG.debug(invalidPizzaString, exc.getMessage());
+			PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 		}
 
 		JLabel lblCatgorie = new JLabel("Catégorie :");
@@ -171,18 +171,18 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 							Decimal.priceRound(Double.parseDouble(txtPrix.getText())),
 							CategoriePizza.findCategoryByConstantName(((CbxItem) cbxCategorie.getSelectedItem()).getValue())));
 					menu.setStatus("La pizza " + txtNom.getText() + " a été modifié !", 0);
-					PizzeriaAdminConsoleApp.LOG.info("Pizza has been modified (" + txtNom.getText() + ")");
+					PizzeriaAdminInterfaceApp.LOG.info("Pizza has been modified (" + txtNom.getText() + ")");
 					lock = true;
 					fillPizzas(dao, cbxPizza.getSelectedIndex());
 					lock = false;
 				}
 			} catch (NumberFormatException | InvalidPizzaException exc) {
-				PizzeriaAdminConsoleApp.LOG.debug(invalidConversionString,
+				PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString,
 						((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
 			} catch (UpdatePizzaException | CategoryNotFoundException exc) {
 				String msg = "Can't modify pizza " + txtNom.getText();
 				menu.setStatus(msg, 2);
-				PizzeriaAdminConsoleApp.LOG.debug(msg + " : {}", exc.getMessage());
+				PizzeriaAdminInterfaceApp.LOG.debug(msg + " : {}", exc.getMessage());
 			}
 		});
 		btnValider.setFont(textFont);
@@ -203,10 +203,10 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 							dao.getPizzaById(Integer.parseInt((((CbxItem) cbxPizza.getSelectedItem()).getValue())))
 									.getCategorie().toString());
 				} catch (NumberFormatException exc) {
-					PizzeriaAdminConsoleApp.LOG.debug(invalidConversionString, ((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
+					PizzeriaAdminInterfaceApp.LOG.debug(invalidConversionString, ((CbxItem) cbxPizza.getSelectedItem()).getValue(), exc.getMessage());
 				} catch (InvalidPizzaException exc) {
 					menu.setStatus("La pizza sélectionnée est invalide", 2);
-					PizzeriaAdminConsoleApp.LOG.debug(invalidPizzaString, exc.getMessage());
+					PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 				}
 			}
 		});
@@ -234,7 +234,7 @@ public class ModifierPizzaOptionMenu extends OptionMenu {
 			txtPrix.setBackground(new Color(1f, 1f, 1f));
 		} catch (InvalidPizzaException exc) {
 			menu.setStatus("Pizza Invalide", 2);
-			PizzeriaAdminConsoleApp.LOG.debug(invalidPizzaString, exc.getMessage());
+			PizzeriaAdminInterfaceApp.LOG.debug(invalidPizzaString, exc.getMessage());
 		}
 	}
 

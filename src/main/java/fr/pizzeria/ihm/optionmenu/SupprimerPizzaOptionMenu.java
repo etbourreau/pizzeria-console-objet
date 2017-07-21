@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.bin.PizzeriaAdminConsoleApp;
+import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
@@ -69,12 +69,12 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 						JOptionPane.OK_CANCEL_OPTION) == 0) {
 					dao.deletePizza(p);
 					menu.setStatus("Pizza " + p.getNom() + " supprimée !", 0);
-					PizzeriaAdminConsoleApp.LOG.info("Pizza has been removed (" + p.getNom() + ")");
+					PizzeriaAdminInterfaceApp.LOG.info("Pizza has been removed (" + p.getNom() + ")");
 					fillPizzas(dao, 0);
 				}
 			} catch (DeletePizzaException | InvalidPizzaException exc) {
 				menu.setStatus("La pizza n'a pas pu être supprimé !", 2);
-				PizzeriaAdminConsoleApp.LOG.debug("Can't remove pizza : {}", exc.getMessage());
+				PizzeriaAdminInterfaceApp.LOG.debug("Can't remove pizza : {}", exc.getMessage());
 			}
 		});
 		btnSupprimer.setFont(textFont);
