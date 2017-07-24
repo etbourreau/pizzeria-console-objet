@@ -12,6 +12,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import fr.pizzeria.dao.PizzaDaoDb;
@@ -26,14 +27,29 @@ public class TestDaoDb {
 
 	private PizzaDaoDb dao;
 	private Connection c;
+	static String DB_DRIVER = "org.h2.Driver";
+	static String DB_CONNECTION = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+	static String DB_USER = "sa";
+	static String DB_PASSWORD = "";
+
+	@BeforeClass
+	public static void setTable() throws SQLException, ClassNotFoundException {
+		String createPizza = "CREATE TABLE PIZZA(id int primary key auto_increment, code varchar(255) UNIQUE, nom varchar(255), prix double(8), idCategorie int(11))";
+		Class.forName(DB_DRIVER);
+		Connection c = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
+		try (PreparedStatement ps = c.prepareStatement(createPizza)) {
+			ps.executeUpdate();
+		}
+	}
 
 	@Before
 	public void setUp() throws ClassNotFoundException, SQLException {
-		this.c = generateConnectionWithData();
-		this.dao = new PizzaDaoDb(c);
+		generateDbData(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+		this.dao = new PizzaDaoDb(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
 	}
 
-	private Connection generateConnectionWithData() throws SQLException, ClassNotFoundException {
+	private void generateDbData(String dbDriver, String dbUrl, String dbUser, String dbPwd)
+			throws SQLException, ClassNotFoundException {
 		List<Pizza> jeuEssais = new ArrayList<>();
 		jeuEssais.add(new Pizza(0, "PEP", "Pépéroni", 12.50, CategoriePizza.VIANDE));
 		jeuEssais.add(new Pizza(1, "MAR", "Margherita", 14.00, CategoriePizza.VEGAN));
@@ -45,86 +61,55 @@ public class TestDaoDb {
 		jeuEssais.add(new Pizza(7, "IND", "L'indienne", 14.00, CategoriePizza.VIANDE));
 		jeuEssais.add(new Pizza(8, "TRU", "La truite fumée", 13.50, CategoriePizza.POISSON));
 
-		String DB_DRIVER = "org.h2.Driver";
-		String DB_CONNECTION = "jdbc:h2:mem:test";
-		String DB_USER = "sa";
-		String DB_PASSWORD = "";
-		Class.forName(DB_DRIVER);
-		Connection c = DriverManager.getConnection(DB_CONNECTION, DB_USER, DB_PASSWORD);
+		c = DriverManager.getConnection(dbUrl, dbUser, dbPwd);
 
-		String createPizza = "CREATE TABLE PIZZA(id int primary key auto_increment, code varchar(255) UNIQUE, nom varchar(255), prix double(8), idCategorie int(11))";
 		String insertPizza = "INSERT INTO PIZZA(id, code, nom, prix, idCategorie) VALUES (?,?,?,?,?)";
 
-		try (PreparedStatement ps = c.prepareStatement(createPizza)) {
-			ps.executeUpdate();
-		}
 		try (PreparedStatement ps = c.prepareStatement(insertPizza)) {
 			for (Pizza p : jeuEssais) {
 				ps.setInt(1, p.getId());
 				ps.setString(2, p.getCode());
 				ps.setString(3, p.getNom());
 				ps.setDouble(4, p.getPrix());
-				ps.setInt(5, p.getCategorie().getId());
+				ps.setInt(5, p.getCategorie().ordinal());
 				ps.executeUpdate();
 			}
 		}
-
-		return c;
 	}
 
 	@After
 	public void tearDown() throws SQLException {
-		c.close();
+		try (PreparedStatement ps = c.prepareStatement("TRUNCATE TABLE pizza")) {
+			ps.execute();
+		}
 	}
 
 	@Test
-	public void testInit() throws SQLException {
-		this.dao.init();
-		assertEquals(9, dao.findAllPizzas().size());
-	}
-
-	@Test
-	public void testFindAllPizzas() {
+	public void testFindAllPizzas() throws SQLException {
 		assertEquals(dao.findAllPizzas().size(), 9);
 	}
 
 	@Test
-	public void testGetPizzaByIdValid() throws InvalidPizzaException {
+	public void testGetPizzaByIdValid() throws InvalidPizzaException, SQLException {
 		Pizza p = this.dao.getPizzaById(2);
 		assertEquals(p.getNom(), "La Reine");
 	}
 
-	@Test(expected = InvalidPizzaException.class)
-	public void testGetPizzaByIdInvalidPizzaException() throws InvalidPizzaException {
-		Pizza p = this.dao.getPizzaById(9);
-	}
-
 	@Test
-	public void testGetPizzaByCodeValid() throws InvalidPizzaException {
+	public void testGetPizzaByCodeValid() throws InvalidPizzaException, SQLException {
 		Pizza p = this.dao.getPizzaByCode("REI");
 		assertEquals(p.getNom(), "La Reine");
 	}
 
-	@Test(expected = InvalidPizzaException.class)
-	public void testGetPizzaByCodeInvalidPizzaException() throws InvalidPizzaException {
-		Pizza p = this.dao.getPizzaByCode("AAA");
-	}
-
 	@Test
-	public void testFindPizzasByCategory() {
+	public void testFindPizzasByCategory() throws SQLException {
 		CategoriePizza cp = CategoriePizza.VIANDE;
 		List<Pizza> list = this.dao.findPizzasByCategory(cp);
 		assertEquals(list.size(), 6);
 	}
 
 	@Test
-	public void testGetNextAvailableId() {
-		int index = this.dao.getNextAvailableId();
-		assertEquals(index, 9);
-	}
-
-	@Test
-	public void testSaveNewPizza() throws SavePizzaException {
+	public void testSaveNewPizza() throws SavePizzaException, SQLException {
 		this.dao.saveNewPizza(new Pizza(9, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE));
 		assertEquals(this.dao.findAllPizzas().size(), 10);
 	}
@@ -135,7 +120,7 @@ public class TestDaoDb {
 	}
 
 	@Test
-	public void testUpdatePizza() throws InvalidPizzaException, UpdatePizzaException {
+	public void testUpdatePizza() throws UpdatePizzaException, SQLException {
 		Pizza p = this.dao.getPizzaById(3);
 		p.setNom("4 fromages");
 		this.dao.updatePizza(p);
@@ -150,7 +135,7 @@ public class TestDaoDb {
 	}
 
 	@Test(expected = InvalidPizzaException.class)
-	public void testDeletePizza() throws InvalidPizzaException, DeletePizzaException {
+	public void testDeletePizza() throws DeletePizzaException, SQLException {
 		Pizza p = this.dao.getPizzaById(3);
 		this.dao.deletePizza(p);
 		this.dao.getPizzaById(3);

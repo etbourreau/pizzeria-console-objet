@@ -1,8 +1,5 @@
 package fr.pizzeria.bin;
 
-
-import java.sql.SQLException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +8,12 @@ import fr.pizzeria.dao.PizzaDaoDb;
 import fr.pizzeria.ihm.menu.Menu;
 
 /**
- * @author etbourreau
- * Main Launcher class
+ * @author etbourreau Main Launcher class
  */
 public class PizzeriaAdminInterfaceApp {
-	
+
 	public static final Logger LOG = LoggerFactory.getLogger(PizzeriaAdminInterfaceApp.class);
-	
+
 	public static void main(String[] args) {
 		LOG.info("Pizzeria started !");
 
@@ -26,11 +22,9 @@ public class PizzeriaAdminInterfaceApp {
 		final String DB_USER = "pizzayolo";
 		final String DB_PASSWORD = "pizza";
 
-		try {
-			IPizzaDao dao = new PizzaDaoDb(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
-			new Menu(dao);
-		} catch (ClassNotFoundException | SQLException e) {
-			LOG.info("Can't launch application", e);
-		}
+		IPizzaDao dao = new PizzaDaoDb(DB_DRIVER, DB_CONNECTION, DB_USER, DB_PASSWORD);
+		LOG.info("Dao launched");
+		new Menu(dao);
+		LOG.info("Menu launched");
 	}
 }

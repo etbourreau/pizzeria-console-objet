@@ -1,6 +1,5 @@
 package fr.pizzeria.ihm.optionmenu;
 
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -10,7 +9,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.ihm.util.JFrameTools;
@@ -18,16 +21,21 @@ import fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
 	
+	private static final Logger LOG = LoggerFactory.getLogger(ListerPizzaOptionMenu.class);
+
 	Comparator<Pizza> sorter;
 	
 	public ListerPizzaOptionMenu(IPizzaDao dao, Menu m, Comparator<Pizza> sorter, String name) {
 		super(dao, m);
+		LOG.info("Creating lister pizzas frame...");
 		this.libelle = name;
 		this.sorter = sorter;
+		LOG.info("...lister pizzas frame");
 	}
 
 	@Override
 	public boolean execute() {
+		LOG.info("Launching lister pizzas frame...");
 		
 		JPanel panel = new DefaultPanel();
 		
@@ -46,18 +54,18 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 			tablePizzas.setEnabled(false);
 			tablePizzas.setBounds(0, 0, 460, 260);
 			tablePizzas.setModel(JFrameTools.createPizzaModel(pizzas));
-			tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
-			tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
-			tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
-			tablePizzas.getColumnModel().getColumn(4).setPreferredWidth(10);
+			tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(10);
+			tablePizzas.getColumnModel().getColumn(2).setPreferredWidth(20);
+			tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(10);
 			scrollPane.setViewportView(tablePizzas);
-		} catch (SQLException e) {
-			menu.setStatus("Ne peut pas afficher les pizzas", 2);
-			Menu.LOG.debug("Can't show pizzas", e);
+		} catch (InvalidPizzaException e) {
+			menu.setStatus("Les pizzas ne peuvent pas afficher", 2);
+			Menu.LOG.info("Can't show pizzas", e);
 		}
 		
 		menu.setContenu(panel);
-		
+
+		LOG.info("...lister pizzas frame launched");
 		return true;
 	}
 	

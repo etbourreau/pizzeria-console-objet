@@ -12,7 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.CbxItem;
@@ -23,6 +25,8 @@ import fr.pizzeria.model.Pizza;
 
 public class AjouterPizzaOptionMenu extends OptionMenu {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AjouterPizzaOptionMenu.class);
+
 	private JTextField txtCode;
 	private JTextField txtNom;
 	private JTextField txtPrix;
@@ -30,11 +34,14 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 
 	public AjouterPizzaOptionMenu(IPizzaDao dao, Menu m) {
 		super(dao, m);
+		LOG.info("Creating ajout pizza frame...");
 		this.libelle = "Ajouter une Pizza";
+		LOG.info("...ajout pizza frame created");
 	}
 
 	@Override
 	public boolean execute() {
+		LOG.info("Launching ajout pizza frame...");
 
 		JPanel panel = new DefaultPanel();
 
@@ -47,7 +54,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 		lblAjouterUnePizza.setBounds(10, 11, 440, 27);
 		panel.add(lblAjouterUnePizza);
 
-		JLabel lblCode = new JLabel("Code (3 caract\u00E8res) :");
+		JLabel lblCode = new JLabel("Code (3 caractères) :");
 		lblCode.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblCode.setFont(textFont);
 		lblCode.setBounds(10, 67, 151, 20);
@@ -137,12 +144,12 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 
 					dao.saveNewPizza(new Pizza(null, code, nom, prix, categ));
 					menu.setStatus("Pizza " + nom + " ajoutée !", 0);
-						PizzeriaAdminInterfaceApp.LOG.info("New pizza has been added ({}, {}, {}, {})", code, nom, prix,
+					LOG.info("New pizza has been added ({}, {}, {}, {})", code, nom, prix,
 								categ.getDescription());
 						initFields();
 						fillCategories(CategoriePizza.values(), 0);
 				} catch (NumberFormatException exc) {
-						PizzeriaAdminInterfaceApp.LOG.debug("Can't add new pizza ({})", exc.getMessage());
+					LOG.info("Can't add new pizza ({})", exc.getMessage());
 					menu.setStatus("La pizza " + txtNom.getText() + " n'a pas pu être ajouté !", 2);
 					}
 				}
@@ -159,6 +166,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 
 		menu.setContenu(panel);
 
+		LOG.info("...ajout pizza frame launched");
 		return true;
 	}
 
@@ -166,6 +174,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 	 * Empties field for new Pizza
 	 */
 	private void initFields() {
+		LOG.info("Resetting fields");
 		txtCode.setText("");
 		txtNom.setText("");
 		txtPrix.setText("");
@@ -177,6 +186,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 	 * @return true if fields are valid, false otherwise
 	 */
 	private boolean validFields() {
+		LOG.info("Testing fields");
 		boolean valid = true;
 		if (txtCode.getText().length() != 3) {
 			txtCode.setBackground(new Color(0.8f, 0.2f, 0.2f));
@@ -208,9 +218,10 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 	 *            by default
 	 */
 	private void fillCategories(CategoriePizza[] categories, int selectedIndex) {
+		LOG.info("Filling categories combobox");
 		cbxCategorie.removeAllItems();
 		for (CategoriePizza cp : categories) {
-			this.cbxCategorie.addItem(new CbxItem(cp.toString(), cp.getDescription()));
+			this.cbxCategorie.addItem(new CbxItem(String.valueOf(cp.ordinal()), cp.getDescription()));
 		}
 		cbxCategorie.setSelectedIndex(selectedIndex);
 	}

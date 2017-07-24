@@ -1,17 +1,15 @@
 package fr.pizzeria.dao;
 
-import java.sql.SQLException;
 import java.util.List;
-import java.util.Optional;
 
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
 public interface IPizzaDao {
 	
-	List<Pizza> findAllPizzas() throws SQLException;
+	List<Pizza> findAllPizzas();
 
-	List<Pizza> findPizzasByCategory(CategoriePizza cp) throws SQLException;
+	List<Pizza> findPizzasByCategory(CategoriePizza cp);
 
 	void saveNewPizza(Pizza pizza);
 
@@ -19,8 +17,8 @@ public interface IPizzaDao {
 
 	void deletePizza(Pizza pizza);
 
-	Optional<Pizza> getPizzaById(int parseInt) throws SQLException;
+	Pizza getPizzaById(int parseInt);
 
-	Optional<Pizza> getPizzaByCode(String code) throws SQLException;
+	Pizza getPizzaByCode(String code);
 	
 }

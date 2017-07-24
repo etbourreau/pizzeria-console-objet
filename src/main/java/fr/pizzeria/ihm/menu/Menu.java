@@ -48,10 +48,16 @@ public class Menu extends JFrame {
 	 * Main menu constructor
 	 */
 	public Menu(IPizzaDao dao) {
+		LOG.info("Initializing menu...");
 		this.dao = dao;
 		this.init();
-		setContentPane(new ImagePanel(
-				Toolkit.getDefaultToolkit().getImage(Menu.class.getResource("/fr/pizzeria/assets/background.jpg"))));
+		setContentPane(
+			new ImagePanel(
+				Toolkit.getDefaultToolkit().getImage(
+					Menu.class.getResource("/fr/pizzeria/assets/background.jpg")
+				)
+			)
+		);
 		setSize(592, 418);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -62,7 +68,7 @@ public class Menu extends JFrame {
 					try {
 						wait(100l);
 					} catch (InterruptedException exc) {
-						LOG.debug("Waiting error ({})", exc.getMessage());
+						LOG.info("Waiting error ({})", exc.getMessage());
 						Thread.currentThread().interrupt();
 					}
 				}
@@ -94,7 +100,7 @@ public class Menu extends JFrame {
 				try {
 					wait(100l);
 				} catch (InterruptedException exc) {
-					LOG.debug("Waiting error ({})", exc.getMessage());
+					LOG.info("Waiting error ({})", exc.getMessage());
 					Thread.currentThread().interrupt();
 				}
 			}
@@ -116,6 +122,7 @@ public class Menu extends JFrame {
 		centreWindow(this);
 
 		setVisible(true);
+		LOG.info("...menu initialized");
 	}
 
 	/**
@@ -125,6 +132,7 @@ public class Menu extends JFrame {
 	 *            frame object
 	 */
 	public static void centreWindow(Window frame) {
+		LOG.info("Centering menu");
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		int x = (int) ((dimension.getWidth() - frame.getWidth()) / 2);
 		int y = (int) ((dimension.getHeight() - frame.getHeight()) / 2);
@@ -135,6 +143,7 @@ public class Menu extends JFrame {
 	 * Initializes default variables
 	 */
 	private void init() {
+		LOG.info("Creating menu options");
 		options = new ArrayList<>();
 		options.add(new ListerPizzaOptionMenu(dao, this, Comparator.comparing(Pizza::getId), "Lister les pizzas"));
 		options.add(new AjouterPizzaOptionMenu(dao, this));
@@ -155,6 +164,7 @@ public class Menu extends JFrame {
 	 *            which receive options
 	 */
 	private void loadOptionMenus(List<OptionMenu> options, JMenu menu) {
+		LOG.info("Loading menu options");
 		options.stream().forEach(item -> {
 			JMenuItem current = new JMenuItem(item.getLibelle());
 			menu.add(current);
@@ -195,6 +205,7 @@ public class Menu extends JFrame {
 	 *            JPanel to show
 	 */
 	public void setContenu(JPanel contenu) {
+		LOG.info("Creating menu content");
 		this.remove(panelContenu);
 		this.panelContenu.removeAll();
 		this.panelContenu = contenu;
@@ -207,6 +218,7 @@ public class Menu extends JFrame {
 	 * hide content Jpanel
 	 */
 	public void hideContenu() {
+		LOG.info("Hding menu content");
 		this.panelContenu.setVisible(false);
 	}
 }

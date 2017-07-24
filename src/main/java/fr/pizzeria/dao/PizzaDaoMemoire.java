@@ -2,10 +2,7 @@ package fr.pizzeria.dao;
 
 import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -36,6 +33,7 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @return the ArrayList of all pizzas
 	 */
 	public List<Pizza> findAllPizzas() {
+		LOG.info("Finding all pizzas");
 		return new ArrayList<>(allPizzas);
 	}
 
@@ -46,8 +44,9 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws InvalidPizzaException
 	 *             if pizza not found
 	 */
-	public Optional<Pizza> getPizzaById(int id) {
-		return allPizzas.stream().filter(p -> p.getId() == id).findAny();
+	public Pizza getPizzaById(int id) {
+		LOG.info("Getting pizza by id {}", id);
+		return allPizzas.stream().filter(p -> p.getId() == id).findAny().orElseThrow(InvalidPizzaException::new);
 	}
 
 	/**
@@ -57,47 +56,35 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 * @throws InvalidPizzaException
 	 *             if pizza not found
 	 */
-	public Optional<Pizza> getPizzaByCode(String code) {
-		return allPizzas.stream().filter(p -> p.getCode().equalsIgnoreCase(code)).findAny();
+	public Pizza getPizzaByCode(String code) {
+		LOG.info("Getting pizza by code {}", code);
+		return allPizzas.stream().filter(p -> p.getCode().equalsIgnoreCase(code)).findAny()
+				.orElseThrow(InvalidPizzaException::new);
 
 	}
 
 	/**
-	 * @return the next free pizza ID
-	 * @throws InvalidPizzaException
-	 *             if pizza not found
-	 */
-	public int getNextAvailableId() {
-		return allPizzas.stream().mapToInt(Pizza::getId).max().getAsInt() + 1;
-	}
-
-	/**
-	 * Sorts the pizzas array by ID asc
-	 */
-	public void sort(Comparator<Pizza> sorter) {
-		Collections.sort(allPizzas, sorter);
-	}
-
-	/**
-	 * Save a new pizza in local memory and soon in database
+	 * Save a new pizza in local memory
 	 * 
 	 * @param pizza
 	 *            is the pizza to create
 	 * @throws SavePizzaException
 	 *             if creation fails
 	 */
-	public void saveNewPizza(Pizza pizza) throws SavePizzaException {
-		try{
+	public void saveNewPizza(Pizza pizza) {
+		LOG.info("Saving new pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix() + " "
+				+ pizza.getCategorie().getDescription() + "...");
+		try {
 			getPizzaByCode(pizza.getCode());
 			throw new SavePizzaException("Code already present");
 		} catch (InvalidPizzaException e) {
 			allPizzas.add(pizza);
-			sort(Comparator.comparing(Pizza::getId));
 		}
+		LOG.info("...pizza saved");
 	}
 
 	/**
-	 * Update a pizza in local memory and soon in database
+	 * Update a pizza in local memory
 	 * 
 	 * @param pizza
 	 *            concerned
@@ -105,17 +92,20 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 *             if update fails
 	 */
 	public void updatePizza(Pizza pizza) {
-		Optional<Pizza> current = getPizzaById(pizza.getId());
-		if (current.isPresent()) {
-			int index = allPizzas.indexOf(current.get());
+		LOG.info("Updating pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix() + " "
+				+ pizza.getCategorie().getDescription() + "...");
+		try {
+			Pizza current = getPizzaById(pizza.getId());
+			int index = allPizzas.indexOf(current);
 			allPizzas.set(index, pizza);
-		} else {
+		} catch (InvalidPizzaException e) {
 			throw new UpdatePizzaException("Can't update pizza : pizza not found");
 		}
+		LOG.info("...pizza updated");
 	}
 
 	/**
-	 * Remove a pizza from local memory and soon from database
+	 * Remove a pizza from local memory
 	 * 
 	 * @param pizza
 	 *            concerned
@@ -125,16 +115,23 @@ public class PizzaDaoMemoire implements IPizzaDao {
 	 *             if deletion fails
 	 */
 	public void deletePizza(Pizza pizza) {
-		Optional<Pizza> current = getPizzaById(pizza.getId());
-		if (current.isPresent()) {
+		LOG.info("Deleting pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix() + " "
+				+ pizza.getCategorie().getDescription() + "...");
+		try {
+			Pizza current = getPizzaById(pizza.getId());
 			int index = allPizzas.indexOf(current);
 			allPizzas.remove(index);
-		} else {
+		} catch (InvalidPizzaException e) {
 			throw new DeletePizzaException("Can't delete pizza : pizza not found");
 		}
+		LOG.info("...pizza deleted");
 	}
 
+	/**
+	 * 
+	 */
 	public List<Pizza> findPizzasByCategory(CategoriePizza cp) {
+		LOG.info("Finding all pizzas for category " + cp.getDescription());
 		return allPizzas.stream().filter(p -> p.getCategorie().equals(cp)).collect(Collectors.toList());
 	}
 

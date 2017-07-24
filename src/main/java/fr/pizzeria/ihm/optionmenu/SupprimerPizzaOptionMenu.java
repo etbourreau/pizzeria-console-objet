@@ -2,7 +2,6 @@ package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Component;
 import java.awt.Font;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.JButton;
@@ -12,7 +11,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import fr.pizzeria.bin.PizzeriaAdminInterfaceApp;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.pizzeria.dao.IPizzaDao;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
@@ -23,15 +24,20 @@ import fr.pizzeria.model.Pizza;
 
 public class SupprimerPizzaOptionMenu extends OptionMenu {
 
+	private static final Logger LOG = LoggerFactory.getLogger(SupprimerPizzaOptionMenu.class);
+
 	private JComboBox<CbxItem> cbxPizza;
 
 	public SupprimerPizzaOptionMenu(IPizzaDao dao, Menu m) {
 		super(dao, m);
+		LOG.info("Creating supprimer pizza frame...");
 		this.libelle = "Supprimer une Pizza";
+		LOG.info("...supprimer pizza frame created");
 	}
 
 	@Override
 	public boolean execute() {
+		LOG.info("Launching supprimer pizza frame...");
 
 		JPanel panel = new DefaultPanel();
 
@@ -61,18 +67,18 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 			int id = Integer.parseInt(((CbxItem) cbxPizza.getSelectedItem()).getValue());
 			Pizza p;
 			try {
-				p = dao.getPizzaById(id).get();
+				p = dao.getPizzaById(id);
 				if (JOptionPane.showConfirmDialog((Component) null,
 						"Voulez-vous vraiment supprimer la pizza " + p.getNom() + " ?", "alert",
 						JOptionPane.OK_CANCEL_OPTION) == 0) {
 					dao.deletePizza(p);
 					menu.setStatus("Pizza " + p.getNom() + " supprimée !", 0);
-					PizzeriaAdminInterfaceApp.LOG.info("Pizza has been removed (" + p.getNom() + ")");
+					LOG.info("Pizza has been removed (" + p.getNom() + ")");
 					fillPizzas(dao, 0);
 				}
-			} catch (DeletePizzaException | InvalidPizzaException | SQLException exc) {
+			} catch (DeletePizzaException | InvalidPizzaException exc) {
 				menu.setStatus("La pizza n'a pas pu être supprimé !", 2);
-				PizzeriaAdminInterfaceApp.LOG.debug("Can't remove pizza : {}", exc.getMessage());
+				LOG.info("Can't remove pizza : {}", exc.getMessage());
 			}
 		});
 		btnSupprimer.setFont(textFont);
@@ -87,6 +93,7 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 
 		menu.setContenu(panel);
 
+		LOG.info("...supprimer pizza frame launched");
 		return true;
 	}
 
@@ -99,17 +106,18 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 	 *            by default
 	 */
 	private void fillPizzas(IPizzaDao dao, int selectedIndex) {
+		LOG.info("Filling pizzas combobox with index {}", selectedIndex);
 		List<Pizza> pizzas;
 		try {
 			pizzas = dao.findAllPizzas();
 			cbxPizza.removeAllItems();
 			for (Pizza p : pizzas) {
-				this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getId() + " " + p.getNom()));
+				this.cbxPizza.addItem(new CbxItem(String.valueOf(p.getId()), p.getCode() + " " + p.getNom()));
 			}
 			cbxPizza.setSelectedIndex(selectedIndex);
-		} catch (SQLException e) {
-			menu.setStatus("La liste des pizza est invalide", 2);
-			PizzeriaAdminInterfaceApp.LOG.debug("Can't fill pizzas", e);
+		} catch (InvalidPizzaException e) {
+			menu.setStatus("La liste des pizza ne peut pas être récupérée", 2);
+			LOG.info("Can't fill pizzas", e);
 		}
 	}
 

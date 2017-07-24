@@ -1,7 +1,6 @@
 package fr.pizzeria.ihm.optionmenu;
 
 import java.awt.Font;
-import java.sql.SQLException;
 import java.util.stream.Stream;
 
 import javax.swing.JComboBox;
@@ -12,7 +11,11 @@ import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.ihm.menu.Menu;
 import fr.pizzeria.ihm.util.CbxItem;
 import fr.pizzeria.ihm.util.DefaultPanel;
@@ -21,16 +24,21 @@ import fr.pizzeria.model.CategoriePizza;
 
 public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ListerPizzaParCategorieOptionMenu.class);
+
 	JComboBox<CbxItem> cbxCategory;
 	JTable tablePizzas;
 
 	public ListerPizzaParCategorieOptionMenu(IPizzaDao dao, Menu m) {
 		super(dao, m);
+		LOG.info("Creating lister pizzas par categorie frame...");
 		this.libelle = "Lister les pizzas par catégorie";
+		LOG.info("...lister pizzas par categorie frame created");
 	}
 
 	@Override
 	public boolean execute() {
+		LOG.info("Launching lister pizza par categorie frame...");
 
 		JPanel panel = new DefaultPanel();
 
@@ -65,27 +73,28 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 		tablePizzas.setBounds(0, 0, 460, 260);
 		tablePizzas.setEnabled(false);
 		fillTablePizzas();
-		tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(0);
-		tablePizzas.getColumnModel().getColumn(1).setPreferredWidth(10);
-		tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(20);
-		tablePizzas.getColumnModel().getColumn(4).setPreferredWidth(10);
+		tablePizzas.getColumnModel().getColumn(0).setPreferredWidth(10);
+		tablePizzas.getColumnModel().getColumn(2).setPreferredWidth(20);
+		tablePizzas.getColumnModel().getColumn(3).setPreferredWidth(10);
 		scrollPane.setViewportView(tablePizzas);
 
 		cbxCategory.addActionListener(e -> fillTablePizzas());
 
 		menu.setContenu(panel);
 
+		LOG.info("...lister pizzas par categorie launched");
 		return true;
 	}
 
 	private void fillTablePizzas() {
+		LOG.info("Filling table with pizzas");
 		int categoryId = Integer.parseInt(((CbxItem) cbxCategory.getSelectedItem()).getValue());
 		try {
 			tablePizzas.setModel(
 					JFrameTools.createPizzaModel(dao.findPizzasByCategory(CategoriePizza.values()[categoryId])));
-		} catch (SQLException e) {
+		} catch (InvalidPizzaException e) {
 			menu.setStatus("Ne peut pas charger les pizzas", 2);
-			Menu.LOG.debug("Can't load pizzas", e);
+			Menu.LOG.info("Can't load pizzas", e);
 		}
 	}
 
@@ -98,13 +107,14 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 	 *            by default
 	 */
 	private void fillCategories(IPizzaDao dao, int selectedIndex) {
+		LOG.info("Filling categories combobox with index {}", selectedIndex);
 		cbxCategory.removeAllItems();
 		Stream.of(CategoriePizza.values()).filter(cp -> {
 			try {
 				return !dao.findPizzasByCategory(cp).isEmpty();
-			} catch (SQLException e) {
+			} catch (InvalidPizzaException e) {
 				menu.setStatus("Ne peut pas remplir la catégorie " + cp.getDescription(), 2);
-				Menu.LOG.debug("Can't load category " + cp.getDescription(), e);
+				Menu.LOG.info("Can't load category " + cp.getDescription(), e);
 				return false;
 			}
 		})

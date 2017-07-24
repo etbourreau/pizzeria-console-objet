@@ -18,11 +18,10 @@ public class TestPizza {
 		this.pizza = new Pizza(1, "MON", "La montagnarde", 13.5, categorie);
 	}
 
-	@Test
-	public void testID() {
-		assertEquals("L'ID n'est pas correct", this.pizza.getId(), 1);
-	}
-
+	/*
+	 * @Test public void testID() { assertEquals("L'ID n'est pas correct",
+	 * this.pizza.getId(), 1); }
+	 */
 	@Test
 	public void testCode() {
 		assertEquals("Le code n'est pas correct", this.pizza.getCode(), "MON");

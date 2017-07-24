@@ -7,6 +7,8 @@ import javax.swing.table.DefaultTableModel;
 import fr.pizzeria.model.Pizza;
 
 public class JFrameTools {
+	
+	private JFrameTools(){}
 
 	/**
 	 * Creates the JTable model to fill the pizzas JTable
@@ -16,15 +18,14 @@ public class JFrameTools {
 	 * @return the generated tableModel
 	 */
 	public static DefaultTableModel createPizzaModel(List<Pizza> pizzas) {
-		String[] columnsTable = { "ID", "Code", "Nom", "Catégorie", "Prix" };
+		String[] columnsTable = { "Code", "Nom", "Catégorie", "Prix" };
 		String[][] dataTable = new String[pizzas.size()][columnsTable.length];
 		int index = 0;
 		for (Pizza p : pizzas) {
-			dataTable[index][0] = String.valueOf(p.getId());
-			dataTable[index][1] = p.getCode();
-			dataTable[index][2] = p.getNom();
-			dataTable[index][3] = p.getCategorie().getDescription();
-			dataTable[index][4] = String.valueOf(p.getPrix()) + "€";
+			dataTable[index][0] = p.getCode();
+			dataTable[index][1] = p.getNom();
+			dataTable[index][2] = p.getCategorie().getDescription();
+			dataTable[index][3] = String.valueOf(p.getPrix()) + "€";
 			index++;
 		}
 		return new DefaultTableModel(dataTable, columnsTable);

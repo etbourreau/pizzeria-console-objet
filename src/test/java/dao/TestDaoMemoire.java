@@ -40,24 +40,24 @@ public class TestDaoMemoire {
 	}
 
 	@Test
-	public void testInit() {
+	public void testInit() throws SQLException {
 		assertEquals(dao.findAllPizzas().size(), 9);
 	}
 
 	@Test
-	public void testFindAllPizzas() {
+	public void testFindAllPizzas() throws SQLException {
 		assertEquals(dao.findAllPizzas().size(), 9);
 	}
 
 	@Test
-	public void testGetPizzaByIdValid() throws InvalidPizzaException {
+	public void testGetPizzaByIdValid() throws SQLException {
 		Pizza p = this.dao.getPizzaById(2);
 		assertEquals(p.getNom(), "La Reine");
 	}
 
 	@Test(expected = InvalidPizzaException.class)
 	public void testGetPizzaByIdInvalidPizzaException() throws InvalidPizzaException {
-		Pizza p = this.dao.getPizzaById(9);
+		this.dao.getPizzaById(9);
 	}
 
 	@Test
@@ -68,7 +68,7 @@ public class TestDaoMemoire {
 
 	@Test(expected = InvalidPizzaException.class)
 	public void testGetPizzaByCodeInvalidPizzaException() throws InvalidPizzaException {
-		Pizza p = this.dao.getPizzaByCode("AAA");
+		this.dao.getPizzaByCode("AAA");
 	}
 
 	@Test
@@ -76,12 +76,6 @@ public class TestDaoMemoire {
 		CategoriePizza cp = CategoriePizza.VIANDE;
 		List<Pizza> list = this.dao.findPizzasByCategory(cp);
 		assertEquals(list.size(), 6);
-	}
-
-	@Test
-	public void testGetNextAvailableId() {
-		int index = this.dao.getNextAvailableId();
-		assertEquals(index, 9);
 	}
 
 	@Test
@@ -118,13 +112,8 @@ public class TestDaoMemoire {
 
 	@Test(expected = DeletePizzaException.class)
 	public void testDeletePizzaInvalidId() throws DeletePizzaException {
-		try {
-			this.dao.init();
-			Pizza p = new Pizza(10, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE);
-			this.dao.deletePizza(p);
-		} catch (SQLException e) {
-			assertThat(false).isTrue();
-		}
+		Pizza p = new Pizza(10, "MON", "La montagnarde", 13.5, CategoriePizza.VIANDE);
+		this.dao.deletePizza(p);
 	}
 
 }
