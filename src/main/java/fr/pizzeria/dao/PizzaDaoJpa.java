@@ -62,9 +62,7 @@ public class PizzaDaoJpa implements IPizzaDao {
 		
 		executeQuery(em -> {
 			Pizza p = em.find(Pizza.class, pizza.getId());
-			 Optional.ofNullable(p).orElseThrow(() -> {
-				throw new UpdatePizzaException("Can't update pizza : pizza not exists");
-			 });
+			Optional.ofNullable(p).orElseThrow(UpdatePizzaException::new);
 			em.merge(pizza);
 		});
 		LOG.info("...pizza updated");
@@ -77,9 +75,7 @@ public class PizzaDaoJpa implements IPizzaDao {
 		
 		executeQuery(em -> {
 			Pizza p = em.find(Pizza.class, pizza.getId());
-			Optional.ofNullable(p).orElseThrow(() -> {
-				throw new DeletePizzaException("Can't remove pizza : pizza not exists");
-			});
+			Optional.ofNullable(p).orElseThrow(DeletePizzaException::new);
 			em.remove(p);
 		});
 		
