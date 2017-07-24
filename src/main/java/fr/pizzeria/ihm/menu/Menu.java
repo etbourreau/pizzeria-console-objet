@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.PizzaDaoJpa;
 import fr.pizzeria.ihm.optionmenu.AjouterPizzaOptionMenu;
 import fr.pizzeria.ihm.optionmenu.ListerPizzaOptionMenu;
 import fr.pizzeria.ihm.optionmenu.ListerPizzaParCategorieOptionMenu;
@@ -72,6 +73,9 @@ public class Menu extends JFrame {
 						Thread.currentThread().interrupt();
 					}
 				}
+				if (dao instanceof PizzaDaoJpa) {
+					((PizzaDaoJpa) dao).closeDao();
+				}
 				LOG.info("Pizzeria closed !");
 			}
 		});
@@ -103,6 +107,9 @@ public class Menu extends JFrame {
 					LOG.info("Waiting error ({})", exc.getMessage());
 					Thread.currentThread().interrupt();
 				}
+			}
+			if (dao instanceof PizzaDaoJpa) {
+				((PizzaDaoJpa) dao).closeDao();
 			}
 			LOG.info("Pizzeria closed !");
 			System.exit(0);
