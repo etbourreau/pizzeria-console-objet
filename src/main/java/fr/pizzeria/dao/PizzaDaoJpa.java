@@ -2,6 +2,7 @@ package fr.pizzeria.dao;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityManager;
@@ -50,11 +51,7 @@ public class PizzaDaoJpa implements IPizzaDao {
 		LOG.info("Saving new pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix()
 				+ " " + pizza.getCategorie().getDescription() + "...");
 		
-		EntityManager em = emf.createEntityManager();
-		em.getTransaction().begin();
-		em.persist(pizza);
-		em.getTransaction().commit();
-		em.close();
+		executeQuery(em -> em.persist(pizza));
 		LOG.info("...pizza saved");
 	}
 	
@@ -63,17 +60,13 @@ public class PizzaDaoJpa implements IPizzaDao {
 		LOG.info("Updating pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix()
 				+ " " + pizza.getCategorie().getDescription() + "...");
 		
-		EntityManager em = emf.createEntityManager();
-		Pizza p = em.find(Pizza.class, pizza.getId());
-		Optional.ofNullable(p).orElseThrow(() -> {
-			em.close();
-			throw new UpdatePizzaException("Can't update pizza : pizza not exists");
+		executeQuery(em -> {
+			Pizza p = em.find(Pizza.class, pizza.getId());
+			 Optional.ofNullable(p).orElseThrow(() -> {
+				throw new UpdatePizzaException("Can't update pizza : pizza not exists");
+			 });
+			em.merge(pizza);
 		});
-		
-		em.getTransaction().begin();
-		em.merge(pizza);
-		em.getTransaction().commit();
-		em.close();
 		LOG.info("...pizza updated");
 	}
 	
@@ -82,18 +75,23 @@ public class PizzaDaoJpa implements IPizzaDao {
 		LOG.info("Deleting pizza " + pizza.getCode() + " " + pizza.getNom() + " " + pizza.getPrix()
 				+ " " + pizza.getCategorie().getDescription() + "...");
 		
-		EntityManager em = emf.createEntityManager();
-		Pizza p = em.find(Pizza.class, pizza.getId());
-		Optional.ofNullable(p).orElseThrow(() -> {
-			em.close();
-			throw new DeletePizzaException("Can't remove pizza : pizza not exists");
+		executeQuery(em -> {
+			Pizza p = em.find(Pizza.class, pizza.getId());
+			Optional.ofNullable(p).orElseThrow(() -> {
+				throw new DeletePizzaException("Can't remove pizza : pizza not exists");
+			});
+			em.remove(p);
 		});
 		
+		LOG.info("...pizza deleted");
+	}
+	
+	private void executeQuery(Consumer<EntityManager> bc) {
+		EntityManager em = emf.createEntityManager();
 		em.getTransaction().begin();
-		em.remove(p);
+		bc.accept(em);
 		em.getTransaction().commit();
 		em.close();
-		LOG.info("...pizza deleted");
 	}
 	
 	@Override
