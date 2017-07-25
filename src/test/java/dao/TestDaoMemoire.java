@@ -10,8 +10,8 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.dao.PizzaDaoMemoire;
+import fr.pizzeria.dao.admin.IPizzaDao;
+import fr.pizzeria.dao.admin.PizzaDaoMemoire;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.exception.pizza.SavePizzaException;

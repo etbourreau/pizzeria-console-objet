@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm.optionmenu;
+package fr.pizzeria.ihm.admin.optionmenu;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -15,11 +15,12 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.ihm.menu.Menu;
-import fr.pizzeria.ihm.util.CbxItem;
+import fr.pizzeria.dao.admin.IPizzaDao;
+import fr.pizzeria.ihm.OptionMenu;
+import fr.pizzeria.ihm.admin.menu.MenuAdmin;
+import fr.pizzeria.ihm.admin.util.CbxItem;
+import fr.pizzeria.ihm.admin.util.DefaultPanel;
 import fr.pizzeria.ihm.util.Decimal;
-import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
@@ -32,7 +33,7 @@ public class AjouterPizzaOptionMenu extends OptionMenu {
 	private JTextField txtPrix;
 	private JComboBox<CbxItem> cbxCategorie;
 
-	public AjouterPizzaOptionMenu(IPizzaDao dao, Menu m) {
+	public AjouterPizzaOptionMenu(IPizzaDao dao, MenuAdmin m) {
 		super(dao, m);
 		LOG.info("Creating ajout pizza frame...");
 		this.libelle = "Ajouter une Pizza";

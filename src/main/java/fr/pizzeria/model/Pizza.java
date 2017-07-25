@@ -26,7 +26,6 @@ public class Pizza {
 	@MapKeyEnumerated
 	@Column(name = "idCategorie")
 	private CategoriePizza categorie;
-
 	public Pizza() {
 	}
 

@@ -1,4 +1,4 @@
-package fr.pizzeria.dao;
+package fr.pizzeria.dao.admin;
 
 import java.nio.channels.SelectableChannel;
 import java.util.ArrayList;

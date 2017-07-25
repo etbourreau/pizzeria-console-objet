@@ -3,9 +3,9 @@ package fr.pizzeria.bin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.pizzeria.dao.IPizzaDao;
-import fr.pizzeria.dao.PizzaDaoJpa;
-import fr.pizzeria.ihm.menu.Menu;
+import fr.pizzeria.dao.admin.IPizzaDao;
+import fr.pizzeria.dao.admin.PizzaDaoJpa;
+import fr.pizzeria.ihm.admin.menu.MenuAdmin;
 
 /**
  * @author etbourreau Main Launcher class
@@ -19,7 +19,7 @@ public class PizzeriaAdminInterfaceApp {
 
 		IPizzaDao dao = new PizzaDaoJpa();
 		LOG.info("Dao launched");
-		new Menu(dao);
+		new MenuAdmin(dao);
 		LOG.info("Menu launched");
 	}
 }

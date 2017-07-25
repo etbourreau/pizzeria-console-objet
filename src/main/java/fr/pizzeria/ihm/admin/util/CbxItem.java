@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm.util;
+package fr.pizzeria.ihm.admin.util;
 
 public class CbxItem {
 	private String value;

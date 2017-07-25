@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm.optionmenu;
+package fr.pizzeria.ihm.admin.optionmenu;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,11 +12,12 @@ import javax.swing.ScrollPaneConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.admin.IPizzaDao;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
-import fr.pizzeria.ihm.menu.Menu;
-import fr.pizzeria.ihm.util.DefaultPanel;
-import fr.pizzeria.ihm.util.JFrameTools;
+import fr.pizzeria.ihm.OptionMenu;
+import fr.pizzeria.ihm.admin.menu.MenuAdmin;
+import fr.pizzeria.ihm.admin.util.DefaultPanel;
+import fr.pizzeria.ihm.admin.util.JFrameTools;
 import fr.pizzeria.model.Pizza;
 
 public class ListerPizzaOptionMenu extends OptionMenu{
@@ -25,7 +26,7 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 
 	Comparator<Pizza> sorter;
 	
-	public ListerPizzaOptionMenu(IPizzaDao dao, Menu m, Comparator<Pizza> sorter, String name) {
+	public ListerPizzaOptionMenu(IPizzaDao dao, MenuAdmin m, Comparator<Pizza> sorter, String name) {
 		super(dao, m);
 		LOG.info("Creating lister pizzas frame...");
 		this.libelle = name;
@@ -60,7 +61,7 @@ public class ListerPizzaOptionMenu extends OptionMenu{
 			scrollPane.setViewportView(tablePizzas);
 		} catch (InvalidPizzaException e) {
 			menu.setStatus("Les pizzas ne peuvent pas afficher", 2);
-			Menu.LOG.info("Can't show pizzas", e);
+			MenuAdmin.LOG.info("Can't show pizzas", e);
 		}
 		
 		menu.setContenu(panel);

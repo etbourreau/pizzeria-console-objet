@@ -15,7 +15,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import fr.pizzeria.dao.PizzaDaoDb;
+import fr.pizzeria.dao.admin.PizzaDaoDb;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
 import fr.pizzeria.exception.pizza.SavePizzaException;

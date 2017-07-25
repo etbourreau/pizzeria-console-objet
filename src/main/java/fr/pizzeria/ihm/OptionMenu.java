@@ -1,18 +1,18 @@
-package fr.pizzeria.ihm.optionmenu;
+package fr.pizzeria.ihm;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.DaoGeneral;
 import fr.pizzeria.ihm.menu.Menu;
 
 public abstract class OptionMenu {
 	protected String libelle;
-	protected IPizzaDao dao;
+	protected DaoGeneral dao;
 	protected Menu menu;
 	
 	/** Default constructor
 	 * @param reference to the DAO
 	 * @param reference to the main menu
 	 */
-	public OptionMenu(IPizzaDao dao, Menu m) {
+	public OptionMenu(DaoGeneral dao, Menu m) {
 		super();
 		this.dao = dao;
 		this.menu = m;

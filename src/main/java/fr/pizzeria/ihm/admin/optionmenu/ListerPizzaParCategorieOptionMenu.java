@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm.optionmenu;
+package fr.pizzeria.ihm.admin.optionmenu;
 
 import java.awt.Font;
 import java.util.stream.Stream;
@@ -14,12 +14,14 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.DaoGeneral;
+import fr.pizzeria.dao.admin.IPizzaDao;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
-import fr.pizzeria.ihm.menu.Menu;
-import fr.pizzeria.ihm.util.CbxItem;
-import fr.pizzeria.ihm.util.DefaultPanel;
-import fr.pizzeria.ihm.util.JFrameTools;
+import fr.pizzeria.ihm.OptionMenu;
+import fr.pizzeria.ihm.admin.menu.MenuAdmin;
+import fr.pizzeria.ihm.admin.util.CbxItem;
+import fr.pizzeria.ihm.admin.util.DefaultPanel;
+import fr.pizzeria.ihm.admin.util.JFrameTools;
 import fr.pizzeria.model.CategoriePizza;
 
 public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
@@ -29,7 +31,7 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 	JComboBox<CbxItem> cbxCategory;
 	JTable tablePizzas;
 
-	public ListerPizzaParCategorieOptionMenu(IPizzaDao dao, Menu m) {
+	public ListerPizzaParCategorieOptionMenu(IPizzaDao dao, MenuAdmin m) {
 		super(dao, m);
 		LOG.info("Creating lister pizzas par categorie frame...");
 		this.libelle = "Lister les pizzas par catégorie";
@@ -94,7 +96,7 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 					JFrameTools.createPizzaModel(dao.findPizzasByCategory(CategoriePizza.values()[categoryId])));
 		} catch (InvalidPizzaException e) {
 			menu.setStatus("Ne peut pas charger les pizzas", 2);
-			Menu.LOG.info("Can't load pizzas", e);
+			MenuAdmin.LOG.info("Can't load pizzas", e);
 		}
 	}
 
@@ -106,7 +108,7 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 	 * @param selectedIndex
 	 *            by default
 	 */
-	private void fillCategories(IPizzaDao dao, int selectedIndex) {
+	private void fillCategories(DaoGeneral dao, int selectedIndex) {
 		LOG.info("Filling categories combobox with index {}", selectedIndex);
 		cbxCategory.removeAllItems();
 		Stream.of(CategoriePizza.values()).filter(cp -> {
@@ -114,7 +116,7 @@ public class ListerPizzaParCategorieOptionMenu extends OptionMenu {
 				return !dao.findPizzasByCategory(cp).isEmpty();
 			} catch (InvalidPizzaException e) {
 				menu.setStatus("Ne peut pas remplir la catégorie " + cp.getDescription(), 2);
-				Menu.LOG.info("Can't load category " + cp.getDescription(), e);
+				MenuAdmin.LOG.info("Can't load category " + cp.getDescription(), e);
 				return false;
 			}
 		})

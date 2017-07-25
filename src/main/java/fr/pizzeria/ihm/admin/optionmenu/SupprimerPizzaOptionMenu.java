@@ -1,4 +1,4 @@
-package fr.pizzeria.ihm.optionmenu;
+package fr.pizzeria.ihm.admin.optionmenu;
 
 import java.awt.Component;
 import java.awt.Font;
@@ -14,12 +14,14 @@ import javax.swing.SwingConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.pizzeria.dao.IPizzaDao;
+import fr.pizzeria.dao.DaoGeneral;
+import fr.pizzeria.dao.admin.IPizzaDao;
 import fr.pizzeria.exception.pizza.DeletePizzaException;
 import fr.pizzeria.exception.pizza.InvalidPizzaException;
+import fr.pizzeria.ihm.OptionMenu;
+import fr.pizzeria.ihm.admin.util.CbxItem;
+import fr.pizzeria.ihm.admin.util.DefaultPanel;
 import fr.pizzeria.ihm.menu.Menu;
-import fr.pizzeria.ihm.util.CbxItem;
-import fr.pizzeria.ihm.util.DefaultPanel;
 import fr.pizzeria.model.Pizza;
 
 public class SupprimerPizzaOptionMenu extends OptionMenu {
@@ -105,7 +107,7 @@ public class SupprimerPizzaOptionMenu extends OptionMenu {
 	 * @param selectedIndex
 	 *            by default
 	 */
-	private void fillPizzas(IPizzaDao dao, int selectedIndex) {
+	private void fillPizzas(DaoGeneral dao, int selectedIndex) {
 		LOG.info("Filling pizzas combobox with index {}", selectedIndex);
 		List<Pizza> pizzas;
 		try {

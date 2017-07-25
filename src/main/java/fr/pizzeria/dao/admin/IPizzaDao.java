@@ -1,11 +1,12 @@
-package fr.pizzeria.dao;
+package fr.pizzeria.dao.admin;
 
 import java.util.List;
 
+import fr.pizzeria.dao.DaoGeneral;
 import fr.pizzeria.model.CategoriePizza;
 import fr.pizzeria.model.Pizza;
 
-public interface IPizzaDao {
+public interface IPizzaDao extends DaoGeneral {
 	
 	List<Pizza> findAllPizzas();
 
@@ -17,7 +18,7 @@ public interface IPizzaDao {
 
 	void deletePizza(Pizza pizza);
 
-	Pizza getPizzaById(int parseInt);
+	Pizza getPizzaById(int idPizza);
 
 	Pizza getPizzaByCode(String code);
 	
